@@ -218,6 +218,8 @@
 	.feedback-dialog .fd-body textarea { width:100%;height:140px;border:1px solid #ddd;border-radius:10px;padding:12px;font-size:14px;resize:none;outline:none;box-sizing:border-box;transition:border-color 0.3s;line-height:1.6; }
 	.feedback-dialog .fd-body textarea:focus { border-color:rgba(203,148,92,1); }
 	.feedback-dialog .fd-body textarea::placeholder { color:#bbb; }
+	.feedback-dialog .fd-body .char-count { text-align:right;font-size:12px;color:#999;margin-top:4px; }
+	.feedback-dialog .fd-body .char-count.over { color:rgba(220,53,69,1); }
 	.feedback-dialog .fd-footer { padding:16px 24px;display:flex;justify-content:flex-end;gap:12px;border-top:1px solid #f0f0f0; }
 	.feedback-dialog .fd-footer .fd-submit { padding:8px 28px;background:rgba(203,148,92,1);color:#fff;border:none;border-radius:20px;cursor:pointer;font-size:14px;font-weight:500;transition:all 0.3s; }
 	.feedback-dialog .fd-footer .fd-submit:hover { background:rgba(180,120,70,1); }
@@ -332,7 +334,7 @@
 		<div class="order-modal">
 			<div class="modal-header">
 				<span>确认订餐</span>
-				<span class="close-btn" @click="closeOrder()">X/span>
+				<span class="close-btn" @click="closeOrder()">X</span>
 			</div>
 			<div class="modal-body">
 				<div class="food-preview">
@@ -390,7 +392,7 @@
 		<div class="batch-modal">
 			<div class="bm-header">
 				<span>快捷订餐</span>
-				<span class="close-btn" @click="closeBatchOrder()">X/span>
+				<span class="close-btn" @click="closeBatchOrder()">X</span>
 			</div>
 			<div class="bm-body">
 				<!-- 左侧：菜品列表 -->
@@ -467,7 +469,7 @@
 		<div class="edit-modal">
 			<div class="em-header">
 				<span>编辑订单</span>
-				<span class="close-btn" @click="closeEditOrder()">X/span>
+				<span class="close-btn" @click="closeEditOrder()">X</span>
 			</div>
 			<div class="em-body">
 				<div class="em-row">
@@ -894,6 +896,7 @@
         submitFeedback() {
           var that = this;
           if (!that.feedbackContent.trim()) { alert('请输入反馈内容'); return; }
+          if (that.feedbackContent.trim().length > 100) { alert('反馈内容不能超过100字'); return; }
           var postData = {
             yonghuming: that.feedbackUserInfo.yonghuming || '',
             neirong: that.feedbackContent.trim(),
@@ -960,11 +963,12 @@
     <div class="feedback-dialog">
       <div class="fd-header">
         <span>订单反馈</span>
-        <span class="fd-close" @click="closeFeedback()">X/span>
+        <span class="fd-close" @click="closeFeedback()">X</span>
       </div>
       <div class="fd-body">
         <div class="fd-label">请留下您的宝贵意见或问题反馈：</div>
-        <textarea v-model="feedbackContent" placeholder="请输入反馈内容，例如：菜品口味、服务态度、环境卫生等..."></textarea>
+        <textarea v-model="feedbackContent" maxlength="100" placeholder="请输入反馈内容（100字以内），例如：菜品口味、服务态度、环境卫生等..."></textarea>
+        <div class="char-count" :class="{'over': feedbackContent.length >= 100}">{{feedbackContent.length}} / 100</div>
       </div>
       <div class="fd-footer">
         <button class="fd-cancel" @click="closeFeedback()">取消</button>
