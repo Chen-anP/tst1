@@ -7,6 +7,7 @@
         <id property="id" column="id" />
         <result property="dingdanbianhao" column="dingdanbianhao" />
         <result property="caidanmingcheng" column="caidanmingcheng" />
+        <result property="caipintupian" column="caipintupian" />
         <result property="jiage" column="jiage" />
         <result property="shuliang" column="shuliang" />
         <result property="zongjine" column="zongjine" />

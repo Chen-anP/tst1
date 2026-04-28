@@ -538,6 +538,7 @@ CREATE TABLE `dingcan` (
   `addtime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `dingdanbianhao` varchar(200) DEFAULT NULL COMMENT '订单编号',
   `caidanmingcheng` varchar(200) DEFAULT NULL COMMENT '菜单名称',
+  `caipintupian` varchar(200) DEFAULT NULL COMMENT '菜品图片',
   `jiage` float DEFAULT NULL COMMENT '价格',
   `shuliang` int(11) DEFAULT NULL COMMENT '数量',
   `zongjine` float DEFAULT NULL COMMENT '总金额',
@@ -558,9 +559,9 @@ CREATE TABLE `dingcan` (
 LOCK TABLES `dingcan` WRITE;
 /*!40000 ALTER TABLE `dingcan` DISABLE KEYS */;
 INSERT INTO `dingcan` VALUES
-(1649006900001,'2022-04-03 17:28:20','20220403172820001','红烧牛肉面',28,2,56,'111','胡月','13612512514','香格里拉','已支付'),
-(1649006900002,'2022-04-03 17:29:00','20220403172900002','宫保鸡丁套餐',32,1,32,'111','胡月','13612512514','香格里拉','已支付'),
-(1649006900003,'2022-04-03 17:30:00','20220403173000003','糖醋排骨',48,1,48,'111','胡月','13612512514','香格里拉','未支付');
+(1649006900001,'2022-04-03 17:28:20','20220403172820001','红烧牛肉面','upload/caipin_wu1.jpg',28,2,56,'111','胡月','13612512514','香格里拉','已支付'),
+(1649006900002,'2022-04-03 17:29:00','20220403172900002','宫保鸡丁套餐','upload/caipin_wu2.jpg',32,1,32,'111','胡月','13612512514','香格里拉','已支付'),
+(1649006900003,'2022-04-03 17:30:00','20220403173000003','糖醋排骨','upload/caipin_wan1.jpg',48,1,48,'111','胡月','13612512514','香格里拉','未支付');
 /*!40000 ALTER TABLE `dingcan` ENABLE KEYS */;
 UNLOCK TABLES;
 

@@ -22,6 +22,7 @@ public class DingcanEntity<T> implements Serializable {
     private Long id;
     private String dingdanbianhao;
     private String caidanmingcheng;
+    private String caipintupian;
     private Float jiage;
     private Integer shuliang;
     private Float zongjine;
@@ -44,6 +45,8 @@ public class DingcanEntity<T> implements Serializable {
     public String getDingdanbianhao(){ return dingdanbianhao; }
     public void setCaidanmingcheng(String caidanmingcheng){ this.caidanmingcheng = caidanmingcheng; }
     public String getCaidanmingcheng(){ return caidanmingcheng; }
+    public void setCaipintupian(String caipintupian){ this.caipintupian = caipintupian; }
+    public String getCaipintupian(){ return caipintupian; }
     public void setJiage(Float jiage){ this.jiage = jiage; }
     public Float getJiage(){ return jiage; }
     public void setShuliang(Integer shuliang){ this.shuliang = shuliang; }

@@ -302,7 +302,7 @@
 			<div v-for="(item,index) in orderList" :key="'o'+index" class="order-item">
 				<div class="order-body">
 					<div class="order-img">
-						<img :src="item.kefangtupian ? baseurl + item.kefangtupian : '../../xznstatic/img/zwimg.jpg'" :alt="item.caidanmingcheng">
+						<img :src="item.caipintupian ? baseurl + item.caipintupian : '../../xznstatic/img/zwimg.jpg'" :alt="item.caidanmingcheng">
 					</div>
 					<div class="order-info">
 						<div class="oi-name">{{item.caidanmingcheng}}</div>
@@ -654,6 +654,7 @@
           var postData = {
             dingdanbianhao: genTradeNo(),
             caidanmingcheng: that.orderForm.caipinmingcheng,
+            caipintupian: that.orderForm.caipintupian || '',
             jiage: that.orderForm.jiage,
             shuliang: that.orderForm.shuliang,
             zongjine: that.orderTotal,
@@ -854,6 +855,7 @@
             var postData = {
               dingdanbianhao: genTradeNo(),
               caidanmingcheng: item.caipinmingcheng,
+              caipintupian: item.caipintupian || '',
               jiage: item.jiage,
               shuliang: item.shuliang,
               zongjine: item.jiage * item.shuliang,
