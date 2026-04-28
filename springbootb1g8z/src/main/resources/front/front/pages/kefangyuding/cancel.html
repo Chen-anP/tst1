@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+<meta charset="utf-8">
+<title>房间退订</title>
+<meta name="keywords" content="" />
+<meta name="description" content="" />
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="../../layui/css/layui.css">
+<link rel="stylesheet" href="../../xznstatic/css/common.css"/>
+<link rel="stylesheet" href="../../xznstatic/css/style.css"/>
+<script type="text/javascript" src="../../xznstatic/js/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="../../xznstatic/js/jquery.SuperSlide.2.1.1.js"></script>
+</head>
+<style>
+	html::after {
+		position: fixed;
+		top: 0;
+		right: 0;
+		left: 0;
+		bottom: 0;
+		content: '';
+		display: block;
+		background-attachment: fixed;
+		background-size: cover;
+		background-position: center;
+		background-image: url(http://codegen.caihongy.cn/20220129/e25ed31f7389488a8bafe4379c6892d7.png);
+	}
+	#test1 {
+		overflow: hidden;
+	}
+	#test1 .layui-carousel-ind li {
+		width: 16px;
+		height: 10px;
+		border-width: 0;
+		border-style: solid;
+		border-color: rgba(0,0,0,.3);
+		border-radius: 3px;
+		background-color: #f7f7f7;
+		box-shadow: 0 0 6px rgba(255,0,0,.8);
+	}
+	#test1 .layui-carousel-ind li.layui-this {
+		width: 24px;
+		height: 10px;
+		border-width: 0;
+		border-style: solid;
+		border-color: rgba(0,0,0,.3);
+		border-radius: 0;
+		background-color: red;
+		box-shadow: 0 0 6px rgba(255,0,0,.8);
+	}
+
+	.recommend {
+		padding: 10px 0;
+		display: flex;
+		justify-content: center;
+		background-repeat: no-repeat;
+		background-position: center center;
+		background-size: cover;
+	}
+	.recommend .box {
+		width: 1002px;
+		margin: 0 auto;
+	}
+	.recommend .box .title {
+		padding: 10px 5px;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		box-sizing: border-box;
+	}
+	.recommend .box .title span {
+		padding: 0 10px;
+		font-size: 16px;
+		line-height: 1.4;
+	}
+
+	.recommend .box .filter {
+		padding: 0 10px;
+		display: flex;
+		align-items: center;
+		box-sizing: border-box;
+		width: 100%;
+		flex-wrap: wrap;
+	}
+	.recommend .box .filter .item-list {
+		display: flex;
+		align-items: center;
+	}
+	.recommend .box .filter .item-list .lable {
+		font-size: 14px;
+		color: #333;
+		box-sizing: border-box;
+	}
+	.recommend .box .filter .item-list input {
+		padding: 0 10px;
+		box-sizing: border-box;
+		outline: none;
+	}
+	.recommend .box .filter button {
+		display: flex;
+		padding: 0 10px;
+		box-sizing: border-box;
+		align-items: center;
+		justify-content: center;
+		outline: none;
+	}
+	.recommend .box .filter button i {
+		margin-right: 4px;
+	}
+
+	.room-list { display:flex;flex-wrap:wrap;padding:0;width:100%;gap:0; }
+	.room-list .room-item { flex:0 0 50%;padding:0 10px;box-sizing:border-box;margin-bottom:20px; }
+	.room-card { background:#fff;border-radius:16px;overflow:hidden;box-shadow:0px 4px 12px rgba(0,0,0,0.1);transition:transform 0.3s,box-shadow 0.3s; }
+	.room-card:hover { transform:translateY(-4px);box-shadow:0 8px 24px rgba(0,0,0,0.18); }
+	.room-card .card-img { width:100%;height:200px;overflow:hidden;position:relative; }
+	.room-card .card-img img { width:100%;height:100%;object-fit:cover;transition:transform 0.4s; }
+	.room-card:hover .card-img img { transform:scale(1.06); }
+	.room-card .card-img .price-badge { position:absolute;bottom:12px;right:12px;background:rgba(220,53,69,0.92);color:#fff;padding:6px 16px;border-radius:20px;font-size:18px;font-weight:bold;backdrop-filter:blur(4px); }
+	.room-card .card-img .price-badge span { font-size:12px; }
+	.room-card .card-body { padding:16px 18px; }
+	.room-card .card-body .room-name { font-size:18px;font-weight:bold;color:#333;margin-bottom:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
+	.room-card .card-body .room-meta { font-size:13px;color:#888;margin-bottom:5px;display:flex;align-items:center;gap:6px; }
+	.room-card .card-body .room-meta i { font-size:14px;color:rgba(203,148,92,1);flex-shrink:0; }
+	.room-card .card-body .room-meta.hotel { color:#555;font-weight:500; }
+	.room-card .card-body .divider { height:1px;background:#f0f0f0;margin:10px 0; }
+	.room-card .card-body .booking-row { display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;font-size:13px;color:#666; }
+	.room-card .card-body .booking-row .label { color:#999; }
+	.room-card .card-body .card-footer { display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding-top:12px;border-top:1px solid #f0f0f0; }
+	.room-card .card-body .card-footer .status-tag { display:inline-block;padding:4px 14px;border-radius:14px;font-size:12px;font-weight:500; }
+	.status-paid { background:#e6f7e6;color:#52c41a;border:1px solid #b7eb8f; }
+	.status-unpaid { background:#fff2e8;color:#fa541c;border:1px solid #ffbb96; }
+	.cancel-btn { padding:8px 24px;background-color:rgba(220,53,69,1);color:#fff;border:none;border-radius:20px;cursor:pointer;font-size:13px;font-weight:500;transition:all 0.3s; }
+	.cancel-btn:hover { background-color:rgba(200,40,55,1);transform:scale(1.03); }
+
+	/* 退订确认弹窗 */
+	.cancel-mask { display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1002;justify-content:center;align-items:center; }
+	.cancel-mask.show { display:flex; }
+	.cancel-dialog { background:#fff;border-radius:16px;width:520px;max-width:92%;overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,0.3);animation:modalIn 0.3s ease; }
+	.cancel-dialog .cd-header { padding:16px 24px;background:rgba(220,53,69,0.95);color:#fff;font-size:17px;font-weight:bold;display:flex;justify-content:space-between;align-items:center; }
+	.cancel-dialog .cd-header .cd-close { cursor:pointer;font-size:22px;line-height:1;transition:transform 0.2s; }
+	.cancel-dialog .cd-header .cd-close:hover { transform:rotate(90deg); }
+	.cancel-dialog .cd-img-wrap { width:100%;height:240px;overflow:hidden;position:relative; }
+	.cancel-dialog .cd-img-wrap img { width:100%;height:100%;object-fit:cover; }
+	.cancel-dialog .cd-img-wrap .cd-price { position:absolute;bottom:12px;right:12px;background:rgba(220,53,69,0.92);color:#fff;padding:6px 16px;border-radius:20px;font-size:18px;font-weight:bold;backdrop-filter:blur(4px); }
+	.cancel-dialog .cd-img-wrap .cd-price span { font-size:12px; }
+	.cancel-dialog .cd-body { padding:20px 24px; }
+	.cancel-dialog .cd-body .cd-row { display:flex;justify-content:space-between;align-items:center;padding:6px 0;font-size:14px;color:#555; }
+	.cancel-dialog .cd-body .cd-row .cd-label { color:#999;min-width:80px; }
+	.cancel-dialog .cd-body .cd-divider { height:1px;background:#f0f0f0;margin:10px 0; }
+	.cancel-dialog .cd-body .cd-warning { display:flex;align-items:center;gap:8px;padding:12px 16px;background:#fff5f5;border:1px solid #ffccc7;border-radius:10px;color:#cf1322;font-size:13px;margin-top:12px; }
+	.cancel-dialog .cd-footer { padding:16px 24px;display:flex;justify-content:flex-end;gap:12px;border-top:1px solid #f0f0f0; }
+	.cancel-dialog .cd-footer .cd-confirm { padding:8px 28px;background:rgba(220,53,69,1);color:#fff;border:none;border-radius:20px;cursor:pointer;font-size:14px;font-weight:500;transition:all 0.3s; }
+	.cancel-dialog .cd-footer .cd-confirm:hover { background:rgba(200,40,55,1); }
+	.cancel-dialog .cd-footer .cd-back { padding:8px 28px;background:#f5f5f5;color:#666;border:1px solid #ddd;border-radius:20px;cursor:pointer;font-size:14px;transition:all 0.3s; }
+	.cancel-dialog .cd-footer .cd-back:hover { background:#eee; }
+
+	@keyframes modalIn { from { opacity:0;transform:scale(0.92); } to { opacity:1;transform:scale(1); } }
+
+	/* 右下角反馈按钮 */
+	.feedback-fab { position:fixed;bottom:40px;right:40px;width:56px;height:56px;border-radius:50%;background:rgba(203,148,92,1);color:#fff;border:none;cursor:pointer;font-size:24px;box-shadow:0 4px 16px rgba(203,148,92,0.4);transition:all 0.3s;z-index:900;display:flex;align-items:center;justify-content:center; }
+	.feedback-fab:hover { transform:scale(1.1);box-shadow:0 6px 24px rgba(203,148,92,0.5);background:rgba(180,120,70,1); }
+	/* 反馈弹窗 */
+	.feedback-mask { display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.45);z-index:1001;justify-content:center;align-items:center; }
+	.feedback-mask.show { display:flex; }
+	.feedback-dialog { background:#fff;border-radius:16px;width:460px;max-width:90%;overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,0.25);animation:modalIn 0.3s ease; }
+	.feedback-dialog .fd-header { padding:16px 24px;background:rgba(203,148,92,1);color:#fff;font-size:17px;font-weight:bold;display:flex;justify-content:space-between;align-items:center; }
+	.feedback-dialog .fd-header .fd-close { cursor:pointer;font-size:22px;line-height:1;transition:transform 0.2s; }
+	.feedback-dialog .fd-header .fd-close:hover { transform:rotate(90deg); }
+	.feedback-dialog .fd-body { padding:24px; }
+	.feedback-dialog .fd-body .fd-label { font-size:14px;color:#333;margin-bottom:8px;font-weight:500; }
+	.feedback-dialog .fd-body textarea { width:100%;height:140px;border:1px solid #ddd;border-radius:10px;padding:12px;font-size:14px;resize:none;outline:none;box-sizing:border-box;transition:border-color 0.3s;line-height:1.6; }
+	.feedback-dialog .fd-body textarea:focus { border-color:rgba(203,148,92,1); }
+	.feedback-dialog .fd-body textarea::placeholder { color:#bbb; }
+	.feedback-dialog .fd-footer { padding:16px 24px;display:flex;justify-content:flex-end;gap:12px;border-top:1px solid #f0f0f0; }
+	.feedback-dialog .fd-footer .fd-submit { padding:8px 28px;background:rgba(203,148,92,1);color:#fff;border:none;border-radius:20px;cursor:pointer;font-size:14px;font-weight:500;transition:all 0.3s; }
+	.feedback-dialog .fd-footer .fd-submit:hover { background:rgba(180,120,70,1); }
+	.feedback-dialog .fd-footer .fd-submit:disabled { background:#ccc;cursor:default; }
+	.feedback-dialog .fd-footer .fd-cancel { padding:8px 28px;background:#f5f5f5;color:#666;border:1px solid #ddd;border-radius:20px;cursor:pointer;font-size:14px;transition:all 0.3s; }
+	.feedback-dialog .fd-footer .fd-cancel:hover { background:#eee; }
+
+	.layui-laypage .layui-laypage-count {
+		padding: 0 10px;
+	}
+	.layui-laypage .layui-laypage-skip {
+		padding-left: 10px;
+	}
+</style>
+<body>
+  <div id="app">
+    <div class="banner">
+      <div class="layui-carousel" id="test1" :style='{"boxShadow":"0 0 0px rgba(255,0,0,.8)","margin":"0 auto","borderColor":"rgba(0,0,0,.3)","borderRadius":"0","borderWidth":"0","width":"100%","borderStyle":"solid"}'>
+      	  <div carousel-item>
+      		<div v-for="(item,index) in swiperList" :key="index">
+      			<img style="width: 100%;height: 100%;object-fit:cover;" :src="item.img" />
+      		</div>
+      	  </div>
+      	</div>
+    </div>
+	<div class="recommend index-pv1" :style='{"padding":"10px 0 10px 0","boxShadow":"0 0 0px rgba(255,0,0,.8)","margin":"0px 0 0 0","borderColor":"rgba(0,0,0,.3)","borderRadius":"0","borderWidth":"0","background":"transparent","borderStyle":"solid"}'>
+		<div class="box" style='width:80%'>
+	    <div class="title" :style='{"padding":"10px 0 10px 0","boxShadow":"0 0 0px rgba(255,0,0,.8)","margin":"10px 0 10px 0","borderColor":"rgba(213, 169, 122, 1)","backgroundColor":"rgba(223, 195, 153, 1)","borderRadius":"10px","borderWidth":"10px 0 0","borderStyle":"solid","justifyContent":"space-between","height":"54px"}'>
+	      <span :style='{"padding":"0 10px","boxShadow":"0 0 6px rgba(255,0,0,0)","borderColor":"rgba(255,0,0,1)","backgroundColor":"rgba(0,0,0,0)","color":"rgba(255, 255, 255, 1)","borderRadius":"0 0 2px 0","borderWidth":"0","fontSize":"18px","borderStyle":"solid"}'>房间退订</span><span :style='{"padding":"0 10px","boxShadow":"0 0 6px rgba(255,0,0,0)","borderColor":"rgba(0,0,0,0)","backgroundColor":"rgba(0,0,0,0)","color":"rgba(255, 255, 255, 1)","borderRadius":"0","borderWidth":"0","fontSize":"14px","borderStyle":"solid"}'>您现在的位置：房间退订</span>
+	    </div>
+		<form class="layui-form filter" :style='{"padding":"0 10px","boxShadow":"0 0 0px rgba(255,0,0,.8)","margin":"10px 0 10px 0","borderColor":"rgba(0,0,0,.3)","backgroundColor":"rgba(255, 255, 255, 0)","borderRadius":"4px","borderWidth":"0","borderStyle":"solid","justifyContent":"flex-end","height":"64px"}'>
+			<div class="item-list">
+				<div class="lable" :style='{"padding":"0 10px","boxShadow":"0 0 6px rgba(255,0,0,0)","margin":"0","borderColor":"rgba(0,0,0,0)","backgroundColor":"transparent","color":"rgba(0, 0, 0, 1)","borderRadius":"0","textAlign":"right","borderWidth":"0","width":"auto","fontSize":"16px","borderStyle":"solid"}'>客房名称</div>
+				<input type="text" :style='{"boxShadow":"0 0 6px rgba(255,0,0,0)","borderColor":"#ccc","backgroundColor":"rgba(233, 233, 233, 1)","color":"rgba(0, 0, 0, 1)","borderRadius":"8px","textAlign":"center","borderWidth":"0","width":"140px","fontSize":"16px","borderStyle":"solid","height":"44px"}' name="kefangmingcheng" id="kefangmingcheng" placeholder="客房名称" autocomplete="off" class="layui-input">
+			</div>
+			<button :style='{"padding":"0 20px","boxShadow":"0 0 0px rgba(0,0,0,0)","margin":"0 0 0 10px","borderColor":"#409EFF","backgroundColor":"rgba(203, 148, 92, 1)","color":"#fff","borderRadius":"44px","borderWidth":"0","width":"auto","fontSize":"14px","borderStyle":"solid","height":"40px"}' id="btn-search" type="button" class="layui-btn layui-btn-normal">
+			  <i v-if="true" class="layui-icon layui-icon-search"></i>搜索
+			</button>
+		</form>
+	    <div class="room-list">
+	      <div v-for="(item,index) in dataList" :key="index" class="room-item">
+	        <div class="room-card">
+	          <div class="card-img">
+	            <img :src="item.kefangtupian ? baseurl + item.kefangtupian.split(',')[0] : '../../xznstatic/img/zwimg.jpg'" :alt="item.kefangmingcheng">
+	            <div class="price-badge"><span>￥</span>{{Number(item.zongjine).toFixed(2)}}</div>
+	          </div>
+	          <div class="card-body">
+	            <div class="room-name">{{item.kefangmingcheng}}</div>
+	            <div class="room-meta"><i class="layui-icon layui-icon-home"></i>{{item.kefangleixing}}</div>
+	            <div class="room-meta hotel"><i class="layui-icon layui-icon-location"></i>{{item.jiudianmingcheng}} · {{item.jiudiandizhi}}</div>
+	            <div class="divider"></div>
+	            <div class="booking-row"><span class="label">预定编号</span><span>{{item.yudingbianhao}}</span></div>
+	            <div class="booking-row"><span class="label">预定日期</span><span>{{item.yudingriqi}}</span></div>
+	            <div class="booking-row"><span class="label">预订数量</span><span>{{item.shuliang}} 间</span></div>
+	            <div class="card-footer">
+	              <span class="status-tag" :class="item.ispay=='已支付'?'status-paid':'status-unpaid'">{{item.ispay}}</span>
+	              <button v-if="!isEmployee" class="cancel-btn" @click="cancelOrder(item.id)">退订</button>
+	            </div>
+	          </div>
+	        </div>
+	      </div>
+	      <div v-if="dataList.length==0" style="text-align:center;padding:60px 0;color:#999;font-size:16px;width:100%;">
+	        <i class="layui-icon layui-icon-face-surprised" style="font-size:48px;color:#ddd;display:block;margin-bottom:10px;"></i>
+	        暂无预订记录
+	      </div>
+	    </div>
+		<div class="pager" id="pager" :style="{textAlign:2==1?'left':2==2?'center':'right'}"></div>
+	  </div>
+	</div>
+  </div>
+
+  <script src="../../layui/layui.js"></script>
+  <script src="../../js/vue.js"></script>
+  <script src="../../js/config.js"></script>
+  <script src="../../modules/config.js"></script>
+  <script src="../../js/utils.js"></script>
+
+  <script type="text/javascript">
+    var vue = new Vue({
+      el: '#app',
+      data: {
+        swiperList: [],
+        dataList: [],
+		baseurl: '',
+		isEmployee: localStorage.getItem('userTable') === 'yuangong',
+		// 反馈
+		showFeedback: false,
+		feedbackContent: '',
+		feedbackUserInfo: {},
+		// 退订确认弹窗
+		showCancelDialog: false,
+		cancelItem: null,
+      },
+      methods: {
+      	isAuth(tablename, button) {
+          return isFrontAuth(tablename, button)
+        },
+        jump(url) {
+          jump(url)
+        },
+        cancelOrder(id) {
+          var item = this.dataList.find(function(d){ return d.id === id; });
+          if(item) {
+            this.cancelItem = item;
+            this.showCancelDialog = true;
+          }
+        },
+        closeCancelDialog() {
+          this.showCancelDialog = false;
+          this.cancelItem = null;
+        },
+        confirmCancel() {
+          var that = this;
+          if(!that.cancelItem) return;
+          var id = that.cancelItem.id;
+          layui.http.request('kefangyuding/cancel','post', id, function(res){
+            if(res.code==0){
+              alert('退订成功');
+              that.showCancelDialog = false;
+              that.cancelItem = null;
+              location.reload();
+            } else {
+              alert(res.msg || '退订失败');
+            }
+          });
+        },
+
+        // ====== 订单反馈 ======
+        openFeedback() {
+          this.feedbackContent = '';
+          this.showFeedback = true;
+        },
+        closeFeedback() {
+          this.showFeedback = false;
+        },
+        submitFeedback() {
+          var that = this;
+          if (!that.feedbackContent.trim()) { alert('请输入反馈内容'); return; }
+          var postData = {
+            yonghuming: that.feedbackUserInfo.yonghuming || '',
+            neirong: that.feedbackContent.trim(),
+            jiudianmingcheng: that.feedbackUserInfo.jiudianmingcheng || ''
+          };
+          layui.http.requestJson('xiaofeifankui/save', 'post', postData, function(res) {
+            if (res.code == 0) {
+              alert('🎉 反馈提交成功，感谢您的意见！');
+              that.showFeedback = false;
+              that.feedbackContent = '';
+            } else {
+              alert(res.msg || '提交失败');
+            }
+          });
+        }
+      }
+    });
+
+    layui.use(['layer', 'element', 'carousel', 'laypage', 'http', 'jquery','laydate'], function() {
+	var layer = layui.layer;
+	var element = layui.element;
+	var carousel = layui.carousel;
+	var laypage = layui.laypage;
+	var http = layui.http;
+	var jquery = layui.jquery;
+	var laydate = layui.laydate;
+
+	var limit = 6;
+	vue.baseurl = http.baseurl;
+
+      // 获取轮播图
+      http.request('config/list', 'get', {
+        page: 1,
+        limit: 5
+      }, function(res) {
+        if (res.data.list.length > 0) {
+          let swiperList = [];
+          res.data.list.forEach(element => {
+            if (element.value != null) {
+              swiperList.push({
+                img: http.baseurl+element.value
+              });
+            }
+          });
+          vue.swiperList = swiperList;
+		  vue.$nextTick(() => {
+		    carousel.render({
+		    	elem: '#test1',
+		  		width: '100%',
+		    	height: '300px',
+		    	arrow: 'hover',
+		    	anim: 'default',
+		    	autoplay: 'true',
+		    	interval: '3000',
+		    	indicator: 'none'
+		    });
+		  })
+        }
+      });
+
+      // 分页列表
+      pageList();
+
+      // 搜索按钮
+      jquery('#btn-search').click(function(e) {
+        pageList();
+      });
+
+      function pageList() {
+        var param = {
+          page: 1,
+          limit: limit
+        }
+
+        if (jquery('#kefangmingcheng').val()) {
+          param['kefangmingcheng'] = jquery('#kefangmingcheng').val() ? '%' + jquery('#kefangmingcheng').val() + '%' : '';
+        }
+
+        // 获取列表数据
+        http.request('kefangyuding/list', 'get', param, function(res) {
+          vue.dataList = res.data.list
+          // 分页
+          laypage.render({
+            elem: 'pager',
+            count: res.data.total,
+            limit: limit,
+            groups: 5,
+            layout: ["prev","page","next"],
+            theme: '#CB945C',
+            jump: function(obj, first) {
+            	param.page = obj.curr;
+              if (!first) {
+                http.request('kefangyuding/list', 'get', param, function(res) {
+                  vue.dataList = res.data.list
+                })
+              }
+            }
+          });
+        })
+      }
+    });
+
+    // 反馈弹窗逻辑
+    vue.feedbackUserInfo = {};
+    var userTable = localStorage.getItem('userTable');
+    if (userTable) {
+      layui.http.request(userTable + '/session', 'get', {}, function(res) {
+        if (res.code == 0 && res.data) {
+          vue.feedbackUserInfo = res.data;
+        }
+      });
+    }
+  </script>
+
+  <!-- 右下角反馈按钮 -->
+  <button class="feedback-fab" @click="openFeedback()" title="订单反馈">💬</button>
+
+  <!-- 反馈弹窗 -->
+  <div class="feedback-mask" :class="{'show': showFeedback}" @click.self="closeFeedback()">
+    <div class="feedback-dialog">
+      <div class="fd-header">
+        <span>📝 订单反馈</span>
+        <span class="fd-close" @click="closeFeedback()">×</span>
+      </div>
+      <div class="fd-body">
+        <div class="fd-label">请留下您的宝贵意见或问题反馈：</div>
+        <textarea v-model="feedbackContent" placeholder="请输入反馈内容，例如：房间卫生、服务态度、设施情况等..."></textarea>
+      </div>
+      <div class="fd-footer">
+        <button class="fd-cancel" @click="closeFeedback()">取消</button>
+        <button class="fd-submit" @click="submitFeedback()" :disabled="!feedbackContent.trim()">提交反馈</button>
+      </div>
+    </div>
+  </div>
+  <!-- 退订确认弹窗 -->
+  <div class="cancel-mask" :class="{'show': showCancelDialog}" @click.self="closeCancelDialog()">
+    <div class="cancel-dialog" v-if="cancelItem">
+      <div class="cd-header">
+        <span>⚠️ 确认退订</span>
+        <span class="cd-close" @click="closeCancelDialog()">×</span>
+      </div>
+      <div class="cd-img-wrap">
+        <img :src="cancelItem.kefangtupian ? baseurl + cancelItem.kefangtupian.split(',')[0] : '../../xznstatic/img/zwimg.jpg'" :alt="cancelItem.kefangmingcheng">
+        <div class="cd-price"><span>￥</span>{{Number(cancelItem.zongjine).toFixed(2)}}</div>
+      </div>
+      <div class="cd-body">
+        <div class="cd-row"><span class="cd-label">客房名称</span><span>{{cancelItem.kefangmingcheng}}</span></div>
+        <div class="cd-row"><span class="cd-label">客房类型</span><span>{{cancelItem.kefangleixing}}</span></div>
+        <div class="cd-row"><span class="cd-label">酒店名称</span><span>{{cancelItem.jiudianmingcheng}}</span></div>
+        <div class="cd-row"><span class="cd-label">酒店地址</span><span>{{cancelItem.jiudiandizhi}}</span></div>
+        <div class="cd-row"><span class="cd-label">预定编号</span><span>{{cancelItem.yudingbianhao}}</span></div>
+        <div class="cd-row"><span class="cd-label">预定日期</span><span>{{cancelItem.yudingriqi}}</span></div>
+        <div class="cd-row"><span class="cd-label">预订数量</span><span>{{cancelItem.shuliang}} 间</span></div>
+        <div class="cd-row"><span class="cd-label">支付状态</span><span :style="{color: cancelItem.ispay=='已支付'?'#52c41a':'#fa541c'}">{{cancelItem.ispay}}</span></div>
+        <div class="cd-divider"></div>
+        <div class="cd-warning">
+          <span>⚠️</span>
+          <span>退订后不可恢复，请确认是否继续退订？</span>
+        </div>
+      </div>
+      <div class="cd-footer">
+        <button class="cd-back" @click="closeCancelDialog()">返回</button>
+        <button class="cd-confirm" @click="confirmCancel()">确认退订</button>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

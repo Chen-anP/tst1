@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+<meta charset="utf-8">
+<title>订餐</title>
+<meta name="keywords" content="" />
+<meta name="description" content="" />
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="../../layui/css/layui.css">
+<link rel="stylesheet" href="../../xznstatic/css/common.css"/>
+<link rel="stylesheet" href="../../xznstatic/css/style.css"/>
+<script type="text/javascript" src="../../xznstatic/js/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="../../xznstatic/js/jquery.SuperSlide.2.1.1.js"></script>
+</head>
+<style>
+	html::after {
+		position: fixed;
+		top: 0;
+		right: 0;
+		left: 0;
+		bottom: 0;
+		content: '';
+		display: block;
+		background-attachment: fixed;
+		background-size: cover;
+		background-position: center;
+		background-image: url(http://codegen.caihongy.cn/20220129/e25ed31f7389488a8bafe4379c6892d7.png);
+	}
+	#test1 { overflow: hidden; }
+	#test1 .layui-carousel-ind li { width:16px;height:10px;border-width:0;border-style:solid;border-color:rgba(0,0,0,.3);border-radius:3px;background-color:#f7f7f7;box-shadow:0 0 6px rgba(255,0,0,.8); }
+	#test1 .layui-carousel-ind li.layui-this { width:24px;height:10px;border-width:0;border-style:solid;border-color:rgba(0,0,0,.3);border-radius:0;background-color:red;box-shadow:0 0 6px rgba(255,0,0,.8); }
+
+	.recommend { padding:10px 0;display:flex;justify-content:center;background-repeat:no-repeat;background-position:center center;background-size:cover; }
+	.recommend .box { width:1002px;margin:0 auto; }
+	.recommend .box .title { padding:10px 5px;display:flex;justify-content:space-between;align-items:center;box-sizing:border-box; }
+	.recommend .box .title span { padding:0 10px;font-size:16px;line-height:1.4; }
+
+	/* 三餐标签 */
+	.meal-tabs { display:flex;justify-content:center;margin:15px 0;gap:0; }
+	.meal-tabs .tab-item { padding:10px 40px;font-size:16px;cursor:pointer;border:2px solid rgba(213,169,122,1);background:#fff;color:#333;transition:all 0.3s; }
+	.meal-tabs .tab-item:first-child { border-radius:8px 0 0 8px; }
+	.meal-tabs .tab-item:last-child { border-radius:0 8px 8px 0; }
+	.meal-tabs .tab-item.active { background:rgba(203,148,92,1);color:#fff;border-color:rgba(203,148,92,1); }
+	.meal-tabs .tab-item:hover { background:rgba(203,148,92,0.8);color:#fff; }
+
+	/* 菜品卡片网格 */
+	.menu-grid { display:flex;flex-wrap:wrap;padding:0;width:100%; }
+	.menu-grid .menu-card { flex:0 0 25%;padding:0 8px;box-sizing:border-box;margin-bottom:16px; }
+	.menu-grid .menu-card .card-body { cursor:pointer;background:#fff;border-radius:12px;overflow:hidden;transition:transform 0.3s,box-shadow 0.3s;box-shadow:0px 2px 8px rgba(0,0,0,0.1); }
+	.menu-grid .menu-card .card-body:hover { transform:translateY(-4px);box-shadow:0 8px 20px rgba(0,0,0,0.15); }
+	.menu-grid .menu-card .card-body .card-img { width:100%;height:140px;overflow:hidden; }
+	.menu-grid .menu-card .card-body .card-img img { width:100%;height:100%;object-fit:cover;transition:transform 0.3s; }
+	.menu-grid .menu-card .card-body:hover .card-img img { transform:scale(1.05); }
+	.menu-grid .menu-card .card-body .card-info { padding:10px; }
+	.menu-grid .menu-card .card-body .card-info .card-name { font-size:15px;font-weight:bold;color:#333;margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
+	.menu-grid .menu-card .card-body .card-info .card-meta { font-size:12px;color:#999;margin-bottom:4px; }
+	.menu-grid .menu-card .card-body .card-info .card-bottom { display:flex;justify-content:space-between;align-items:center;margin-top:6px; }
+	.menu-grid .menu-card .card-body .card-info .card-price { color:red;font-size:16px;font-weight:bold; }
+	.menu-grid .menu-card .card-body .card-info .card-price span { font-size:12px; }
+	.menu-grid .menu-card .card-body .card-info .order-btn { padding:4px 14px;background:rgba(203,148,92,1);color:#fff;border:none;border-radius:16px;cursor:pointer;font-size:12px;transition:background 0.3s; }
+	.menu-grid .menu-card .card-body .card-info .order-btn:hover { background:rgba(180,120,70,1); }
+
+	/* 订单弹窗 */
+	.order-modal-mask { display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:999;justify-content:center;align-items:center; }
+	.order-modal-mask.show { display:flex; }
+	.order-modal { background:#fff;border-radius:12px;width:500px;max-width:90%;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,0.3);animation:modalIn 0.3s ease; }
+	@keyframes modalIn { from{transform:scale(0.9);opacity:0} to{transform:scale(1);opacity:1} }
+	.order-modal .modal-header { padding:16px 20px;background:rgba(203,148,92,1);color:#fff;font-size:18px;font-weight:bold;display:flex;justify-content:space-between;align-items:center; }
+	.order-modal .modal-header .close-btn { cursor:pointer;font-size:22px;line-height:1; }
+	.order-modal .modal-body { padding:20px; }
+	.order-modal .modal-body .food-preview { display:flex;gap:15px;margin-bottom:20px;padding-bottom:15px;border-bottom:1px solid #eee; }
+	.order-modal .modal-body .food-preview img { width:100px;height:80px;object-fit:cover;border-radius:8px; }
+	.order-modal .modal-body .food-preview .food-detail { flex:1; }
+	.order-modal .modal-body .food-preview .food-detail .fd-name { font-size:16px;font-weight:bold;color:#333; }
+	.order-modal .modal-body .food-preview .food-detail .fd-type { font-size:13px;color:#666;margin-top:4px; }
+	.order-modal .modal-body .food-preview .food-detail .fd-price { color:red;font-size:18px;font-weight:bold;margin-top:4px; }
+	.order-modal .modal-body .form-row { display:flex;align-items:center;margin-bottom:14px; }
+	.order-modal .modal-body .form-row .form-label { width:80px;font-size:14px;color:#333;text-align:right;margin-right:10px;flex-shrink:0; }
+	.order-modal .modal-body .form-row .form-input { flex:1; }
+	.order-modal .modal-body .form-row .form-input input { width:100%;height:38px;border:1px solid #ddd;border-radius:6px;padding:0 10px;font-size:14px;box-sizing:border-box; }
+	.order-modal .modal-body .form-row .form-input input:focus { border-color:rgba(203,148,92,1);outline:none; }
+	.order-modal .modal-body .total-row { display:flex;justify-content:flex-end;align-items:center;padding-top:10px;border-top:1px solid #eee;margin-top:10px; }
+	.order-modal .modal-body .total-row .total-label { font-size:16px;color:#333;margin-right:10px; }
+	.order-modal .modal-body .total-row .total-price { color:red;font-size:22px;font-weight:bold; }
+	.order-modal .modal-footer { padding:16px 20px;display:flex;justify-content:flex-end;gap:10px;border-top:1px solid #eee; }
+	.order-modal .modal-footer .btn-submit { padding:8px 30px;background:rgba(203,148,92,1);color:#fff;border:none;border-radius:20px;cursor:pointer;font-size:14px;transition:background 0.3s; }
+	.order-modal .modal-footer .btn-submit:hover { background:rgba(180,120,70,1); }
+	.order-modal .modal-footer .btn-cancel { padding:8px 30px;background:#f5f5f5;color:#666;border:1px solid #ddd;border-radius:20px;cursor:pointer;font-size:14px; }
+
+	/* 分隔标题 */
+	.section-title { padding:10px 0;display:flex;justify-content:space-between;align-items:center;margin:10px 0; }
+	.section-title .st-left { font-size:18px;font-weight:bold;color:#333;border-left:4px solid rgba(203,148,92,1);padding-left:10px; }
+	.section-title .st-right { font-size:13px;color:#999;cursor:pointer; }
+	.section-title .st-right:hover { color:rgba(203,148,92,1); }
+
+	/* 我的订单 */
+	.order-list { display:flex;flex-wrap:wrap;padding:0;width:100%; }
+	.order-list .order-item { flex:0 0 50%;padding:0 10px;box-sizing:border-box; }
+	.order-list .order-item .order-body { cursor:default;background:#fff;border-radius:12px;padding:12px;display:flex;gap:12px;box-shadow:0px 2px 8px rgba(0,0,0,0.08);margin-bottom:12px;transition:box-shadow 0.3s; }
+	.order-list .order-item .order-body:hover { box-shadow:0 4px 14px rgba(0,0,0,0.14); }
+	.order-list .order-item .order-body .order-img { width:90px;height:75px;flex-shrink:0;overflow:hidden;border-radius:8px; }
+	.order-list .order-item .order-body .order-img img { width:100%;height:100%;object-fit:cover; }
+	.order-list .order-item .order-body .order-info { flex:1;display:flex;flex-direction:column;justify-content:space-between; }
+	.order-list .order-item .order-body .order-info .oi-name { font-size:15px;font-weight:bold;color:#333; }
+	.order-list .order-item .order-body .order-info .oi-meta { font-size:12px;color:#999; }
+	.order-list .order-item .order-body .order-info .oi-bottom { display:flex;justify-content:space-between;align-items:center; }
+	.order-list .order-item .order-body .order-info .oi-price { color:red;font-size:15px;font-weight:bold; }
+	.order-list .order-item .order-body .order-info .oi-status { font-size:12px;padding:2px 8px;border-radius:10px; }
+	.status-paid { background:#e6f7e6;color:#52c41a; }
+	.status-unpaid { background:#fff2e8;color:#fa541c; }
+	.cancel-btn { padding:4px 14px;background-color:rgba(220,53,69,1);color:#fff;border:none;border-radius:14px;cursor:pointer;font-size:12px;transition:background 0.3s; }
+	.cancel-btn:hover { background-color:rgba(200,40,55,1); }
+
+	.layui-laypage .layui-laypage-count { padding:0 10px; }
+	.layui-laypage .layui-laypage-skip { padding-left:10px; }
+
+	/* 加载中 */
+	.loading-tip { text-align:center;padding:20px;color:#999;font-size:14px; }
+
+	/* 批量订餐弹窗 */
+	.batch-modal-mask { display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1000;justify-content:center;align-items:center; }
+	.batch-modal-mask.show { display:flex; }
+	.batch-modal { background:#fff;border-radius:16px;width:900px;max-width:92%;height:80vh;max-height:680px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 12px 48px rgba(0,0,0,0.25);animation:modalIn 0.3s ease; }
+	.batch-modal .bm-header { padding:16px 24px;background:rgba(203,148,92,1);color:#fff;font-size:18px;font-weight:bold;display:flex;justify-content:space-between;align-items:center;flex-shrink:0; }
+	.batch-modal .bm-header .close-btn { cursor:pointer;font-size:24px;line-height:1;transition:transform 0.2s; }
+	.batch-modal .bm-header .close-btn:hover { transform:rotate(90deg); }
+	.batch-modal .bm-body { flex:1;display:flex;overflow:hidden; }
+	/* 左侧菜品列表 */
+	.bm-body .bm-left { flex:1;display:flex;flex-direction:column;border-right:1px solid #f0f0f0; }
+	.bm-body .bm-left .bm-search { padding:12px 16px;display:flex;gap:8px;border-bottom:1px solid #f0f0f0;flex-shrink:0; }
+	.bm-body .bm-left .bm-search input { flex:1;height:36px;border:1px solid #ddd;border-radius:18px;padding:0 14px;font-size:13px;outline:none;transition:border-color 0.3s; }
+	.bm-body .bm-left .bm-search input:focus { border-color:rgba(203,148,92,1); }
+	.bm-body .bm-left .bm-search button { padding:0 16px;height:36px;background:rgba(203,148,92,1);color:#fff;border:none;border-radius:18px;cursor:pointer;font-size:13px;white-space:nowrap; }
+	.bm-body .bm-left .dish-list { flex:1;overflow-y:auto;padding:8px 12px; }
+	.bm-body .bm-left .dish-list .dish-item { display:flex;gap:12px;padding:10px;margin-bottom:8px;background:#fafafa;border-radius:10px;transition:all 0.2s;cursor:pointer; }
+	.bm-body .bm-left .dish-list .dish-item:hover { background:#f0ebe5;transform:translateX(2px); }
+	.bm-body .bm-left .dish-list .dish-item .dish-img { width:72px;height:60px;border-radius:8px;overflow:hidden;flex-shrink:0; }
+	.bm-body .bm-left .dish-list .dish-item .dish-img img { width:100%;height:100%;object-fit:cover; }
+	.bm-body .bm-left .dish-list .dish-item .dish-info { flex:1;display:flex;flex-direction:column;justify-content:center;min-width:0; }
+	.bm-body .bm-left .dish-list .dish-item .dish-info .di-name { font-size:14px;font-weight:bold;color:#333;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
+	.bm-body .bm-left .dish-list .dish-item .dish-info .di-meta { font-size:12px;color:#999;margin-top:2px; }
+	.bm-body .bm-left .dish-list .dish-item .dish-action { display:flex;flex-direction:column;align-items:flex-end;justify-content:center;flex-shrink:0; }
+	.bm-body .bm-left .dish-list .dish-item .dish-action .di-price { color:red;font-size:15px;font-weight:bold; }
+	.bm-body .bm-left .dish-list .dish-item .dish-action .di-price span { font-size:11px; }
+	.bm-body .bm-left .dish-list .dish-item .dish-action .add-btn { margin-top:4px;width:28px;height:28px;border-radius:50%;background:rgba(203,148,92,1);color:#fff;border:none;cursor:pointer;font-size:18px;line-height:28px;text-align:center;transition:all 0.2s; }
+	.bm-body .bm-left .dish-list .dish-item .dish-action .add-btn:hover { background:rgba(180,120,70,1);transform:scale(1.1); }
+	.bm-body .bm-left .dish-list .dish-item.in-cart { background:#fdf2e9;border:1px solid rgba(203,148,92,0.3); }
+	.bm-body .bm-left .dish-list .dish-item.in-cart .dish-action .add-btn { background:#ccc;cursor:default; }
+	.bm-body .bm-left .dish-list .empty-tip { text-align:center;padding:30px;color:#ccc;font-size:14px; }
+	/* 右侧已选菜品 */
+	.bm-body .bm-right { width:320px;display:flex;flex-direction:column;background:#fafafa; }
+	.bm-body .bm-right .bm-right-header { padding:12px 16px;font-size:15px;font-weight:bold;color:#333;border-bottom:1px solid #f0f0f0;display:flex;justify-content:space-between;align-items:center;flex-shrink:0; }
+	.bm-body .bm-right .bm-right-header .clear-all { font-size:12px;color:#999;cursor:pointer;font-weight:normal; }
+	.bm-body .bm-right .bm-right-header .clear-all:hover { color:rgba(220,53,69,1); }
+	.bm-body .bm-right .cart-list { flex:1;overflow-y:auto;padding:8px 12px; }
+	.bm-body .bm-right .cart-list .cart-item { display:flex;align-items:center;gap:10px;padding:10px;margin-bottom:6px;background:#fff;border-radius:8px;box-shadow:0 1px 4px rgba(0,0,0,0.06); }
+	.bm-body .bm-right .cart-list .cart-item .ci-img { width:48px;height:42px;border-radius:6px;overflow:hidden;flex-shrink:0; }
+	.bm-body .bm-right .cart-list .cart-item .ci-img img { width:100%;height:100%;object-fit:cover; }
+	.bm-body .bm-right .cart-list .cart-item .ci-info { flex:1;min-width:0; }
+	.bm-body .bm-right .cart-list .cart-item .ci-info .ci-name { font-size:13px;font-weight:bold;color:#333;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
+	.bm-body .bm-right .cart-list .cart-item .ci-info .ci-price { font-size:12px;color:red;margin-top:2px; }
+	.bm-body .bm-right .cart-list .cart-item .ci-qty { display:flex;align-items:center;gap:6px;flex-shrink:0; }
+	.bm-body .bm-right .cart-list .cart-item .ci-qty .qty-btn { width:26px;height:26px;border-radius:50%;border:1px solid #ddd;background:#fff;cursor:pointer;font-size:14px;line-height:24px;text-align:center;transition:all 0.2s; }
+	.bm-body .bm-right .cart-list .cart-item .ci-qty .qty-btn:hover { border-color:rgba(203,148,92,1);color:rgba(203,148,92,1); }
+	.bm-body .bm-right .cart-list .cart-item .ci-qty .qty-btn.del { border-color:rgba(220,53,69,1);color:rgba(220,53,69,1); }
+	.bm-body .bm-right .cart-list .cart-item .ci-qty .qty-num { font-size:14px;font-weight:bold;color:#333;min-width:20px;text-align:center; }
+	.bm-body .bm-right .cart-list .cart-item .ci-subtotal { font-size:13px;font-weight:bold;color:red;flex-shrink:0;min-width:50px;text-align:right; }
+	.bm-body .bm-right .cart-list .empty-cart { text-align:center;padding:40px 0;color:#ccc;font-size:13px; }
+	.bm-body .bm-right .cart-list .empty-cart i { font-size:36px;display:block;margin-bottom:8px; }
+	/* 底部结算栏 */
+	.bm-body .bm-right .cart-footer { padding:14px 16px;border-top:1px solid #eee;background:#fff;flex-shrink:0; }
+	.bm-body .bm-right .cart-footer .cf-row { display:flex;justify-content:space-between;align-items:center;margin-bottom:10px; }
+	.bm-body .bm-right .cart-footer .cf-row .cf-label { font-size:13px;color:#666; }
+	.bm-body .bm-right .cart-footer .cf-row .cf-value { font-size:13px;color:#333;font-weight:bold; }
+	.bm-body .bm-right .cart-footer .cf-total { display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:1px solid #f0f0f0; }
+	.bm-body .bm-right .cart-footer .cf-total .cf-total-label { font-size:15px;color:#333;font-weight:bold; }
+	.bm-body .bm-right .cart-footer .cf-total .cf-total-price { font-size:22px;color:red;font-weight:bold; }
+	.bm-body .bm-right .cart-footer .cf-total .cf-total-price span { font-size:13px; }
+	.bm-body .bm-right .cart-footer .submit-btn { width:100%;height:42px;background:rgba(203,148,92,1);color:#fff;border:none;border-radius:21px;cursor:pointer;font-size:15px;font-weight:bold;margin-top:10px;transition:all 0.3s; }
+	.bm-body .bm-right .cart-footer .submit-btn:hover { background:rgba(180,120,70,1);transform:scale(1.01); }
+	.bm-body .bm-right .cart-footer .submit-btn:disabled { background:#ccc;cursor:default;transform:none; }
+
+	/* 右下角反馈按钮 */
+	.feedback-fab { position:fixed;bottom:40px;right:40px;width:56px;height:56px;border-radius:50%;background:rgba(203,148,92,1);color:#fff;border:none;cursor:pointer;font-size:24px;box-shadow:0 4px 16px rgba(203,148,92,0.4);transition:all 0.3s;z-index:900;display:flex;align-items:center;justify-content:center; }
+	.feedback-fab:hover { transform:scale(1.1);box-shadow:0 6px 24px rgba(203,148,92,0.5);background:rgba(180,120,70,1); }
+	/* 反馈弹窗 */
+	.feedback-mask { display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.45);z-index:1001;justify-content:center;align-items:center; }
+	.feedback-mask.show { display:flex; }
+	.feedback-dialog { background:#fff;border-radius:16px;width:460px;max-width:90%;overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,0.25);animation:modalIn 0.3s ease; }
+	.feedback-dialog .fd-header { padding:16px 24px;background:rgba(203,148,92,1);color:#fff;font-size:17px;font-weight:bold;display:flex;justify-content:space-between;align-items:center; }
+	.feedback-dialog .fd-header .fd-close { cursor:pointer;font-size:22px;line-height:1;transition:transform 0.2s; }
+	.feedback-dialog .fd-header .fd-close:hover { transform:rotate(90deg); }
+	.feedback-dialog .fd-body { padding:24px; }
+	.feedback-dialog .fd-body .fd-label { font-size:14px;color:#333;margin-bottom:8px;font-weight:500; }
+	.feedback-dialog .fd-body textarea { width:100%;height:140px;border:1px solid #ddd;border-radius:10px;padding:12px;font-size:14px;resize:none;outline:none;box-sizing:border-box;transition:border-color 0.3s;line-height:1.6; }
+	.feedback-dialog .fd-body textarea:focus { border-color:rgba(203,148,92,1); }
+	.feedback-dialog .fd-body textarea::placeholder { color:#bbb; }
+	.feedback-dialog .fd-footer { padding:16px 24px;display:flex;justify-content:flex-end;gap:12px;border-top:1px solid #f0f0f0; }
+	.feedback-dialog .fd-footer .fd-submit { padding:8px 28px;background:rgba(203,148,92,1);color:#fff;border:none;border-radius:20px;cursor:pointer;font-size:14px;font-weight:500;transition:all 0.3s; }
+	.feedback-dialog .fd-footer .fd-submit:hover { background:rgba(180,120,70,1); }
+	.feedback-dialog .fd-footer .fd-submit:disabled { background:#ccc;cursor:default; }
+	.feedback-dialog .fd-footer .fd-cancel { padding:8px 28px;background:#f5f5f5;color:#666;border:1px solid #ddd;border-radius:20px;cursor:pointer;font-size:14px;transition:all 0.3s; }
+	.feedback-dialog .fd-footer .fd-cancel:hover { background:#eee; }
+</style>
+<body>
+  <div id="app">
+    <div class="banner">
+      <div class="layui-carousel" id="test1" :style='{"boxShadow":"0 0 0px rgba(255,0,0,.8)","margin":"0 auto","borderColor":"rgba(0,0,0,.3)","borderRadius":"0","borderWidth":"0","width":"100%","borderStyle":"solid"}'>
+      	  <div carousel-item>
+      		<div v-for="(item,index) in swiperList" :key="index">
+      			<img style="width:100%;height:100%;object-fit:cover;" :src="item.img" />
+      		</div>
+      	  </div>
+      	</div>
+    </div>
+
+	<!-- 三餐分类标签 -->
+	<div class="meal-tabs">
+		<div class="tab-item" :class="{'active': currentType === ''}" @click="filterByType('')">全部菜品</div>
+		<div class="tab-item" :class="{'active': currentType === '早餐'}" @click="filterByType('早餐')">早餐</div>
+		<div class="tab-item" :class="{'active': currentType === '午餐'}" @click="filterByType('午餐')">午餐</div>
+		<div class="tab-item" :class="{'active': currentType === '晚餐'}" @click="filterByType('晚餐')">晚餐</div>
+	</div>
+
+	<div class="recommend index-pv1" :style='{"padding":"10px 0 10px 0","boxShadow":"0 0 0px rgba(255,0,0,.8)","margin":"0px 0 0 0","borderColor":"rgba(0,0,0,.3)","borderRadius":"0","borderWidth":"0","background":"transparent","borderStyle":"solid"}'>
+		<div class="box" style='width:80%'>
+
+		<!-- ====== 菜品展示区 ====== -->
+		<div class="title" :style='{"padding":"10px 0 10px 0","boxShadow":"0 0 0px rgba(255,0,0,.8)","margin":"10px 0 0 0","borderColor":"rgba(213,169,122,1)","backgroundColor":"rgba(223,195,153,1)","borderRadius":"10px","borderWidth":"10px 0 0","borderStyle":"solid","justifyContent":"space-between","height":"54px"}'>
+	      <span :style='{"padding":"0 10px","color":"rgba(255,255,255,1)","fontSize":"18px"}'>菜品选购</span>
+	      <span :style='{"padding":"0 10px","color":"rgba(255,255,255,1)","fontSize":"14px"}'>点击菜品即可下单</span>
+	    </div>
+
+		<!-- 菜品搜索 -->
+		<div style="display:flex;align-items:center;justify-content:flex-end;padding:10px 0;gap:10px;">
+			<input type="text" v-model="menuSearchKey" @keyup.enter="searchMenu()" placeholder="搜索菜品名称" style="height:38px;width:180px;border:1px solid #ddd;border-radius:20px;padding:0 15px;font-size:14px;outline:none;" />
+			<button @click="searchMenu()" style="padding:0 20px;height:38px;background:rgba(203,148,92,1);color:#fff;border:none;border-radius:20px;cursor:pointer;font-size:14px;">搜索</button>
+		</div>
+
+		<!-- 菜品卡片网格 -->
+		<div class="menu-grid">
+			<div v-for="(item,index) in menuList" :key="'m'+index" class="menu-card">
+				<div class="card-body">
+					<div class="card-img">
+						<img :src="item.caipintupian ? baseurl + item.caipintupian : '../../xznstatic/img/zwimg.jpg'" :alt="item.caipinmingcheng">
+					</div>
+					<div class="card-info">
+						<div class="card-name">{{item.caipinmingcheng}}</div>
+						<div class="card-meta">{{item.canleixing}} · {{item.fene}}</div>
+						<div class="card-bottom">
+							<div class="card-price"><span>￥</span>{{Number(item.jiage).toFixed(2)}}</div>
+							<button v-if="!isEmployee" class="order-btn" @click="openOrder(item)">立即订餐</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div v-if="menuList.length==0" class="loading-tip">暂无菜品信息</div>
+		<div style="text-align:center;padding:10px 0;">
+			<button v-if="menuTotal > menuList.length" @click="loadMoreMenu()" style="padding:8px 30px;background:#f5f5f5;color:#666;border:1px solid #ddd;border-radius:20px;cursor:pointer;font-size:13px;">加载更多菜品 ({{menuTotal}})</button>
+		</div>
+
+		<!-- ====== 我的订单区 ====== -->
+		<div class="section-title">
+			<div class="st-left">我的订单</div>
+			<div style="display:flex;align-items:center;gap:12px;">
+				<button v-if="!isEmployee" @click="openBatchOrder()" style="padding:6px 20px;background:rgba(203,148,92,1);color:#fff;border:none;border-radius:18px;cursor:pointer;font-size:13px;font-weight:bold;transition:all 0.3s;">订餐</button>
+				<div class="st-right" @click="refreshOrders()">刷新订单</div>
+			</div>
+		</div>
+
+		<!-- 订单搜索 -->
+		<div style="display:flex;align-items:center;justify-content:flex-end;padding:0 0 10px 0;gap:10px;">
+			<input type="text" id="orderSearchKey" placeholder="搜索订单编号/菜品名称" style="height:38px;width:200px;border:1px solid #ddd;border-radius:20px;padding:0 15px;font-size:14px;outline:none;" />
+			<button @click="searchOrders()" style="padding:0 20px;height:38px;background:rgba(203,148,92,1);color:#fff;border:none;border-radius:20px;cursor:pointer;font-size:14px;">搜索</button>
+		</div>
+
+		<div class="order-list">
+			<div v-for="(item,index) in orderList" :key="'o'+index" class="order-item">
+				<div class="order-body">
+					<div class="order-img">
+						<img :src="item.kefangtupian ? baseurl + item.kefangtupian : '../../xznstatic/img/zwimg.jpg'" :alt="item.caidanmingcheng">
+					</div>
+					<div class="order-info">
+						<div class="oi-name">{{item.caidanmingcheng}}</div>
+						<div class="oi-meta">编号：{{item.dingdanbianhao}} | {{item.shuliang}}份 | {{item.jiudianmingcheng}}</div>
+						<div class="oi-bottom">
+							<div class="oi-price">￥{{Number(item.zongjine).toFixed(2)}}</div>
+							<div>
+								<span class="oi-status" :class="item.ispay=='已支付'?'status-paid':'status-unpaid'">{{item.ispay}}</span>
+								<button v-if="!isEmployee" class="cancel-btn" @click="cancelOrder(item.id)" style="margin-left:6px;">退订</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div v-if="orderList.length==0" class="loading-tip">暂无订餐记录</div>
+		<div class="pager" id="pager" :style="{textAlign:'center'}"></div>
+
+	  </div>
+	</div>
+	</div>
+
+	<!-- 订单弹窗 -->
+	<div class="order-modal-mask" :class="{'show': showOrderModal}" @click.self="closeOrder()">
+		<div class="order-modal">
+			<div class="modal-header">
+				<span>确认订餐</span>
+				<span class="close-btn" @click="closeOrder()">×</span>
+			</div>
+			<div class="modal-body">
+				<div class="food-preview">
+					<img :src="orderForm.caipintupian ? baseurl + orderForm.caipintupian : '../../xznstatic/img/zwimg.jpg'" :alt="orderForm.caipinmingcheng">
+					<div class="food-detail">
+						<div class="fd-name">{{orderForm.caipinmingcheng}}</div>
+						<div class="fd-type">{{orderForm.canleixing}} · {{orderForm.fene}}</div>
+						<div class="fd-price">￥{{Number(orderForm.jiage).toFixed(2)}}</div>
+					</div>
+				</div>
+				<div class="form-row">
+					<div class="form-label">数量</div>
+					<div class="form-input">
+						<input type="number" v-model.number="orderForm.shuliang" min="1" max="99" @input="calcTotal()">
+					</div>
+				</div>
+				<div class="form-row">
+					<div class="form-label">总金额</div>
+					<div class="form-input">
+						<input type="text" :value="'￥' + orderTotal.toFixed(2)" readonly style="background:#f9f9f9;color:red;font-weight:bold;font-size:16px;">
+					</div>
+				</div>
+				<div class="form-row">
+					<div class="form-label">用户名</div>
+					<div class="form-input">
+						<input type="text" v-model="orderForm.yonghuming" readonly style="background:#f9f9f9;">
+					</div>
+				</div>
+				<div class="form-row">
+					<div class="form-label">姓名</div>
+					<div class="form-input">
+						<input type="text" v-model="orderForm.xingming" readonly style="background:#f9f9f9;">
+					</div>
+				</div>
+				<div class="form-row">
+					<div class="form-label">手机号</div>
+					<div class="form-input">
+						<input type="text" v-model="orderForm.shoujihao" readonly style="background:#f9f9f9;">
+					</div>
+				</div>
+				<div class="total-row">
+					<div class="total-label">应付金额：</div>
+					<div class="total-price">￥{{orderTotal.toFixed(2)}}</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button class="btn-cancel" @click="closeOrder()">取消</button>
+				<button class="btn-submit" @click="submitOrder()">确认下单</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- 批量订餐弹窗 -->
+	<div class="batch-modal-mask" :class="{'show': showBatchModal}" @click.self="closeBatchOrder()">
+		<div class="batch-modal">
+			<div class="bm-header">
+				<span>快捷订餐</span>
+				<span class="close-btn" @click="closeBatchOrder()">×</span>
+			</div>
+			<div class="bm-body">
+				<!-- 左侧：菜品列表 -->
+				<div class="bm-left">
+					<div class="bm-search">
+						<input type="text" v-model="batchSearchKey" @keyup.enter="batchSearchDishes()" placeholder="搜索菜品名称..." />
+						<button @click="batchSearchDishes()">搜索</button>
+					</div>
+					<div class="dish-list" id="batchDishList">
+						<div v-for="(item,index) in batchDishList" :key="'bd'+index"
+							class="dish-item" :class="{'in-cart': isInCart(item.id)}"
+							@click="!isInCart(item.id) && addToCart(item)">
+							<div class="dish-img">
+								<img :src="item.caipintupian ? baseurl + item.caipintupian : '../../xznstatic/img/zwimg.jpg'" :alt="item.caipinmingcheng">
+							</div>
+							<div class="dish-info">
+								<div class="di-name">{{item.caipinmingcheng}}</div>
+								<div class="di-meta">{{item.canleixing}} · {{item.fene}}</div>
+							</div>
+							<div class="dish-action">
+								<div class="di-price"><span>￥</span>{{Number(item.jiage).toFixed(2)}}</div>
+								<button class="add-btn" v-if="!isInCart(item.id)" @click.stop="addToCart(item)">+</button>
+								<button class="add-btn" v-else style="background:#ccc;cursor:default;">✓</button>
+							</div>
+						</div>
+						<div v-if="batchDishList.length==0" class="empty-tip">暂无菜品</div>
+					</div>
+				</div>
+				<!-- 右侧：已选菜品 -->
+				<div class="bm-right">
+					<div class="bm-right-header">
+						<span>已选菜品 ({{cartTotalCount}})</span>
+						<span class="clear-all" @click="clearCart()" v-if="cart.length>0">清空</span>
+					</div>
+					<div class="cart-list">
+						<div v-for="(item,index) in cart" :key="'ct'+index" class="cart-item">
+							<div class="ci-img">
+								<img :src="item.caipintupian ? baseurl + item.caipintupian : '../../xznstatic/img/zwimg.jpg'" :alt="item.caipinmingcheng">
+							</div>
+							<div class="ci-info">
+								<div class="ci-name">{{item.caipinmingcheng}}</div>
+								<div class="ci-price">￥{{Number(item.jiage).toFixed(2)}}</div>
+							</div>
+							<div class="ci-qty">
+								<button class="qty-btn del" @click="decreaseFromCart(index)">−</button>
+								<span class="qty-num">{{item.shuliang}}</span>
+								<button class="qty-btn" @click="increaseCart(index)">+</button>
+							</div>
+							<div class="ci-subtotal">￥{{(item.jiage * item.shuliang).toFixed(2)}}</div>
+						</div>
+						<div v-if="cart.length==0" class="empty-cart">
+							<i class="layui-icon layui-icon-cart-simple"></i>
+							点击左侧菜品添加到购物车
+						</div>
+					</div>
+					<div class="cart-footer">
+						<div class="cf-row">
+							<span class="cf-label">共 {{cartTotalCount}} 件</span>
+							<span class="cf-value">{{cart.length}} 种菜品</span>
+						</div>
+						<div class="cf-total">
+							<span class="cf-total-label">合计</span>
+							<span class="cf-total-price"><span>￥</span>{{cartTotalPrice.toFixed(2)}}</span>
+						</div>
+						<button class="submit-btn" @click="submitBatchOrder()" :disabled="cart.length===0">确认下单</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+  <script src="../../layui/layui.js"></script>
+  <script src="../../js/vue.js"></script>
+  <script src="../../js/config.js"></script>
+  <script src="../../modules/config.js"></script>
+  <script src="../../js/utils.js"></script>
+
+  <script type="text/javascript">
+    var vue = new Vue({
+      el: '#app',
+      data: {
+        swiperList: [],
+        baseurl: '',
+        isEmployee: localStorage.getItem('userTable') === 'yuangong',
+        // 菜品相关
+        menuList: [],
+        menuTotal: 0,
+        menuPage: 1,
+        menuLimit: 8,
+        currentType: '',
+        menuSearchKey: '',
+        // 订单相关
+        orderList: [],
+        orderTotal: 0,
+        // 弹窗
+        showOrderModal: false,
+        orderForm: {
+          caipinmingcheng: '', caipintupian: '', canleixing: '', fene: '',
+          jiage: 0, shuliang: 1, yonghuming: '', xingming: '', shoujihao: ''
+        },
+        // 批量订餐
+        showBatchModal: false,
+        batchDishList: [],
+        batchSearchKey: '',
+        cart: [],
+        cartUserInfo: { yonghuming: '', xingming: '', shoujihao: '', jiudianmingcheng: '' },
+        // 反馈
+        showFeedback: false,
+        feedbackContent: '',
+        feedbackUserInfo: {},
+      },
+      computed: {
+        orderTotal: function() {
+          return (this.orderForm.jiage || 0) * (this.orderForm.shuliang || 0);
+        },
+        cartTotalCount: function() {
+          return this.cart.reduce(function(sum, item) { return sum + item.shuliang; }, 0);
+        },
+        cartTotalPrice: function() {
+          return this.cart.reduce(function(sum, item) { return sum + item.jiage * item.shuliang; }, 0);
+        }
+      },
+      methods: {
+        isAuth(tablename, button) { return isFrontAuth(tablename, button) },
+        jump(url) { jump(url) },
+
+        // 菜品筛选
+        filterByType(type) {
+          this.currentType = type;
+          this.menuPage = 1;
+          this.loadMenu();
+        },
+        searchMenu() {
+          this.menuPage = 1;
+          this.loadMenu();
+        },
+        loadMenu() {
+          var that = this;
+          var param = { page: that.menuPage, limit: that.menuLimit };
+          if (that.currentType) param['canleixing'] = that.currentType;
+          if (that.menuSearchKey) param['caipinmingcheng'] = '%' + that.menuSearchKey + '%';
+          layui.http.request('caipinxinxi/list', 'get', param, function(res) {
+            if (that.menuPage === 1) {
+              that.menuList = res.data.list;
+            } else {
+              that.menuList = that.menuList.concat(res.data.list);
+            }
+            that.menuTotal = res.data.total;
+          });
+        },
+        loadMoreMenu() {
+          this.menuPage++;
+          this.loadMenu();
+        },
+
+        // 打开订单弹窗
+        openOrder(item) {
+          this.orderForm = {
+            id: null,
+            caipinmingcheng: item.caipinmingcheng,
+            caipintupian: item.caipintupian,
+            canleixing: item.canleixing,
+            fene: item.fene,
+            jiage: item.jiage,
+            shuliang: 1,
+            yonghuming: '',
+            xingming: '',
+            shoujihao: '',
+            jiudianmingcheng: ''
+          };
+          // 获取用户信息
+          var userTable = localStorage.getItem('userTable');
+          if (userTable) {
+            layui.http.request(userTable + '/session', 'get', {}, function(res) {
+              if (res.code == 0 && res.data) {
+                if (res.data.yonghuming) vue.orderForm.yonghuming = res.data.yonghuming;
+                if (res.data.xingming) vue.orderForm.xingming = res.data.xingming;
+                if (res.data.shoujihao) vue.orderForm.shoujihao = res.data.shoujihao;
+              }
+            });
+          }
+          this.showOrderModal = true;
+        },
+        closeOrder() {
+          this.showOrderModal = false;
+        },
+        calcTotal() {
+          // computed handles this
+        },
+
+        // 提交订单
+        submitOrder() {
+          var that = this;
+          if (!that.orderForm.caipinmingcheng) { alert('菜品信息错误'); return; }
+          if (!that.orderForm.shuliang || that.orderForm.shuliang < 1) { alert('请选择数量'); return; }
+
+          var postData = {
+            dingdanbianhao: genTradeNo(),
+            caidanmingcheng: that.orderForm.caipinmingcheng,
+            jiage: that.orderForm.jiage,
+            shuliang: that.orderForm.shuliang,
+            zongjine: that.orderTotal,
+            yonghuming: that.orderForm.yonghuming,
+            xingming: that.orderForm.xingming,
+            shoujihao: that.orderForm.shoujihao,
+            jiudianmingcheng: that.orderForm.jiudianmingcheng || '香格里拉',
+            ispay: '未支付'
+          };
+
+          layui.http.requestJson('dingcan/save', 'post', postData, function(res) {
+            if (res.code == 0) {
+              alert('🎉 下单成功！');
+              that.showOrderModal = false;
+              that.searchOrders();
+            } else {
+              alert(res.msg || '下单失败');
+            }
+          });
+        },
+
+        // 订单相关
+        searchOrders() {
+          var param = { page: 1, limit: 8 };
+          var key = document.getElementById('orderSearchKey').value;
+          if (key) {
+            param['dingdanbianhao'] = '%' + key + '%';
+          }
+          this.loadOrders(param);
+        },
+        refreshOrders() {
+          this.loadOrders({ page: 1, limit: 8 });
+        },
+        loadOrders(param) {
+          var that = this;
+          layui.http.request('dingcan/list', 'get', param, function(res) {
+            that.orderList = res.data.list;
+            layui.laypage.render({
+              elem: 'pager',
+              count: res.data.total,
+              limit: param.limit,
+              groups: 5,
+              layout: ["prev","page","next"],
+              theme: '#CB945C',
+              jump: function(obj, first) {
+                if (!first) {
+                  param.page = obj.curr;
+                  layui.http.request('dingcan/list', 'get', param, function(res) {
+                    that.orderList = res.data.list;
+                  });
+                }
+              }
+            });
+          });
+        },
+        cancelOrder(id) {
+          if (!confirm('确定要退订此订单吗？')) return;
+          layui.http.requestJson('dingcan/cancel', 'post', JSON.stringify(id), function(res) {
+            if (res.code == 0) {
+              alert('退订成功');
+              vue.refreshOrders();
+            } else {
+              alert(res.msg || '退订失败');
+            }
+          });
+        },
+
+        // ====== 批量订餐 ======
+        openBatchOrder() {
+          this.cart = [];
+          this.batchSearchKey = '';
+          this.loadBatchDishes();
+          // 获取用户信息
+          var userTable = localStorage.getItem('userTable');
+          if (userTable) {
+            layui.http.request(userTable + '/session', 'get', {}, function(res) {
+              if (res.code == 0 && res.data) {
+                vue.cartUserInfo.yonghuming = res.data.yonghuming || '';
+                vue.cartUserInfo.xingming = res.data.xingming || '';
+                vue.cartUserInfo.shoujihao = res.data.shoujihao || '';
+                vue.cartUserInfo.jiudianmingcheng = res.data.jiudianmingcheng || '';
+              }
+            });
+          }
+          this.showBatchModal = true;
+        },
+        closeBatchOrder() {
+          this.showBatchModal = false;
+        },
+        loadBatchDishes() {
+          var that = this;
+          var param = { page: 1, limit: 100 };
+          if (that.batchSearchKey) param['caipinmingcheng'] = '%' + that.batchSearchKey + '%';
+          layui.http.request('caipinxinxi/list', 'get', param, function(res) {
+            that.batchDishList = res.data.list || [];
+          });
+        },
+        batchSearchDishes() {
+          this.loadBatchDishes();
+        },
+        isInCart(dishId) {
+          return this.cart.some(function(c) { return c.id === dishId; });
+        },
+        addToCart(item) {
+          if (this.isInCart(item.id)) return;
+          this.cart.push({
+            id: item.id,
+            caipinmingcheng: item.caipinmingcheng,
+            caipintupian: item.caipintupian,
+            canleixing: item.canleixing,
+            fene: item.fene,
+            jiage: item.jiage,
+            shuliang: 1
+          });
+        },
+        increaseCart(index) {
+          if (this.cart[index].shuliang < 99) {
+            this.cart[index].shuliang++;
+            this.$forceUpdate();
+          }
+        },
+        decreaseFromCart(index) {
+          if (this.cart[index].shuliang > 1) {
+            this.cart[index].shuliang--;
+          } else {
+            this.cart.splice(index, 1);
+          }
+          this.$forceUpdate();
+        },
+        clearCart() {
+          if (confirm('确定清空已选菜品吗？')) this.cart = [];
+        },
+        submitBatchOrder() {
+          var that = this;
+          if (that.cart.length === 0) { alert('请先选择菜品'); return; }
+
+          // 逐个提交订单
+          var submitted = 0;
+          var failed = 0;
+          var total = that.cart.length;
+
+          that.cart.forEach(function(item) {
+            var postData = {
+              dingdanbianhao: genTradeNo(),
+              caidanmingcheng: item.caipinmingcheng,
+              jiage: item.jiage,
+              shuliang: item.shuliang,
+              zongjine: item.jiage * item.shuliang,
+              yonghuming: that.cartUserInfo.yonghuming,
+              xingming: that.cartUserInfo.xingming,
+              shoujihao: that.cartUserInfo.shoujihao,
+              jiudianmingcheng: that.cartUserInfo.jiudianmingcheng || '香格里拉',
+              ispay: '未支付'
+            };
+
+            layui.http.requestJson('dingcan/save', 'post', postData, function(res) {
+              if (res.code == 0) submitted++;
+              else failed++;
+              // 全部完成后刷新
+              if (submitted + failed === total) {
+                if (failed === 0) {
+                  alert('🎉 成功下单 ' + submitted + ' 个菜品！');
+                } else {
+                  alert('下单完成：成功 ' + submitted + ' 个，失败 ' + failed + ' 个');
+                }
+                that.showBatchModal = false;
+                that.refreshOrders();
+              }
+            });
+          });
+        },
+
+        // ====== 订单反馈 ======
+        openFeedback() {
+          this.feedbackContent = '';
+          this.showFeedback = true;
+        },
+        closeFeedback() {
+          this.showFeedback = false;
+        },
+        submitFeedback() {
+          var that = this;
+          if (!that.feedbackContent.trim()) { alert('请输入反馈内容'); return; }
+          var postData = {
+            yonghuming: that.feedbackUserInfo.yonghuming || '',
+            neirong: that.feedbackContent.trim(),
+            jiudianmingcheng: that.feedbackUserInfo.jiudianmingcheng || ''
+          };
+          layui.http.requestJson('xiaofeifankui/save', 'post', postData, function(res) {
+            if (res.code == 0) {
+              alert('🎉 反馈提交成功，感谢您的意见！');
+              that.showFeedback = false;
+              that.feedbackContent = '';
+            } else {
+              alert(res.msg || '提交失败');
+            }
+          });
+        }
+      }
+    });
+
+    layui.use(['layer','element','carousel','laypage','http','jquery','laydate'], function() {
+      var layer = layui.layer;
+      var carousel = layui.carousel;
+      var http = layui.http;
+      var jquery = layui.jquery;
+
+      vue.baseurl = http.baseurl;
+
+      // 轮播图
+      http.request('config/list', 'get', { page: 1, limit: 5 }, function(res) {
+        if (res.data.list.length > 0) {
+          var swiperList = [];
+          res.data.list.forEach(function(el) {
+            if (el.value != null) swiperList.push({ img: http.baseurl + el.value });
+          });
+          vue.swiperList = swiperList;
+          vue.$nextTick(function() {
+            carousel.render({ elem:'#test1', width:'100%', height:'300px', arrow:'hover', anim:'default', autoplay:'true', interval:'3000', indicator:'none' });
+          });
+        }
+      });
+
+      // 加载菜品
+      vue.loadMenu();
+      // 加载订单
+      vue.loadOrders({ page: 1, limit: 8 });
+    });
+
+    // 反馈弹窗逻辑
+    vue.feedbackUserInfo = {};
+    var userTable = localStorage.getItem('userTable');
+    if (userTable) {
+      layui.http.request(userTable + '/session', 'get', {}, function(res) {
+        if (res.code == 0 && res.data) {
+          vue.feedbackUserInfo = res.data;
+        }
+      });
+    }
+  </script>
+
+  <!-- 右下角反馈按钮 -->
+  <button class="feedback-fab" @click="openFeedback()" title="订单反馈">💬</button>
+
+  <!-- 反馈弹窗 -->
+  <div class="feedback-mask" :class="{'show': showFeedback}" @click.self="closeFeedback()">
+    <div class="feedback-dialog">
+      <div class="fd-header">
+        <span>📝 订单反馈</span>
+        <span class="fd-close" @click="closeFeedback()">×</span>
+      </div>
+      <div class="fd-body">
+        <div class="fd-label">请留下您的宝贵意见或问题反馈：</div>
+        <textarea v-model="feedbackContent" placeholder="请输入反馈内容，例如：菜品口味、服务态度、环境卫生等..."></textarea>
+      </div>
+      <div class="fd-footer">
+        <button class="fd-cancel" @click="closeFeedback()">取消</button>
+        <button class="fd-submit" @click="submitFeedback()" :disabled="!feedbackContent.trim()">提交反馈</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

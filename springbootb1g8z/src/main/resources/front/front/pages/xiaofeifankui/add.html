@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+<meta charset="utf-8">
+<title>消费反馈</title>
+<meta name="keywords" content="" />
+<meta name="description" content="" />
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="../../layui/css/layui.css">
+<link rel="stylesheet" href="../../xznstatic/css/common.css"/>
+<link rel="stylesheet" href="../../xznstatic/css/style.css"/>
+<script type="text/javascript" src="../../xznstatic/js/jquery-1.11.3.min.js"></script>
+</head>
+<style>
+	html::after {
+		position: fixed;
+		top: 0;
+		right: 0;
+		left: 0;
+		bottom: 0;
+		content: '';
+		display: block;
+		background-attachment: fixed;
+		background-size: cover;
+		background-position: center;
+		background-image: url(http://codegen.caihongy.cn/20220129/7c2b359bf9c846cead5ed9ffec79e932.png);
+		z-index: -1;
+	}
+	.add-container {
+		width: 800px;
+		margin: 30px auto;
+		background: #fff;
+		border-radius: 10px;
+		padding: 30px;
+		box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.16);
+	}
+	.add-container .title {
+		font-size: 20px;
+		text-align: center;
+		margin-bottom: 20px;
+		color: rgba(0, 0, 0, 1);
+		font-weight: bold;
+	}
+	.layui-form-item .layui-form-label {
+		width: 120px;
+	}
+	.layui-form-item .layui-input-block {
+		margin-left: 150px;
+	}
+</style>
+<body>
+  <div id="app">
+    <div class="add-container">
+      <div class="title">消费反馈</div>
+      <form class="layui-form" action="">
+        <div class="layui-form-item">
+          <label class="layui-form-label">用户名</label>
+          <div class="layui-input-block">
+            <input type="text" name="yonghuming" id="yonghuming" readonly class="layui-input" style="background:#f5f5f5;">
+          </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+          <label class="layui-form-label">反馈内容</label>
+          <div class="layui-input-block">
+            <textarea name="neirong" id="neirong" placeholder="请输入反馈内容" class="layui-textarea" style="height:150px;"></textarea>
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">酒店名称</label>
+          <div class="layui-input-block">
+            <input type="text" name="jiudianmingcheng" id="jiudianmingcheng" placeholder="请输入酒店名称" autocomplete="off" class="layui-input">
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <div class="layui-input-block">
+            <button type="button" class="layui-btn" lay-submit lay-filter="submit" :style='{"backgroundColor":"rgba(203, 148, 92, 1)","borderRadius":"44px","borderWidth":"0","width":"auto","fontSize":"14px","borderStyle":"solid","height":"40px"}'>提交反馈</button>
+            <button type="button" class="layui-btn layui-btn-primary" @click="back()" :style='{"borderRadius":"44px","borderWidth":"0","width":"auto","fontSize":"14px","borderStyle":"solid","height":"40px"}'>返回</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="../../layui/layui.js"></script>
+  <script src="../../js/vue.js"></script>
+  <script src="../../js/config.js"></script>
+  <script src="../../modules/config.js"></script>
+  <script src="../../js/utils.js"></script>
+
+  <script type="text/javascript">
+    var vue = new Vue({
+      el: '#app',
+      data: {
+      },
+      methods: {
+        back() {
+          jump('../xiaofeifankui/list.html');
+        }
+      }
+    });
+
+    layui.use(['layer', 'form', 'http', 'jquery'], function() {
+      var layer = layui.layer;
+      var form = layui.form;
+      var http = layui.http;
+      var jquery = layui.jquery;
+
+      // 获取用户信息
+      http.request(localStorage.getItem('userTable') + '/session', 'get', {}, function(res) {
+        if (res.code == 0 && res.data) {
+          if (res.data.yonghuming) jquery('#yonghuming').val(res.data.yonghuming);
+        }
+      });
+
+      // 监听提交
+      form.on('submit(submit)', function(data) {
+        var postData = {
+          yonghuming: jquery('#yonghuming').val(),
+          neirong: jquery('#neirong').val(),
+          jiudianmingcheng: jquery('#jiudianmingcheng').val(),
+        };
+
+        if (!postData.neirong) {
+          layer.msg('请输入反馈内容', {icon: 5});
+          return false;
+        }
+
+        http.requestJson('xiaofeifankui/save', 'post', postData, function(res) {
+          if (res.code == 0) {
+            layer.msg('提交成功', {icon: 6, time: 1500}, function() {
+              jump('../xiaofeifankui/list.html');
+            });
+          } else {
+            layer.msg(res.msg || '提交失败', {icon: 5});
+          }
+        });
+        return false;
+      });
+    });
+  </script>
+</body>
+</html>

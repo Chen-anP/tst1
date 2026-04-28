@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+<meta charset="utf-8">
+<title>添加菜品</title>
+<meta name="keywords" content="" />
+<meta name="description" content="" />
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="../../layui/css/layui.css">
+<link rel="stylesheet" href="../../xznstatic/css/common.css"/>
+<link rel="stylesheet" href="../../xznstatic/css/style.css"/>
+<script type="text/javascript" src="../../xznstatic/js/jquery-1.11.3.min.js"></script>
+</head>
+<style>
+	html::after {
+		position: fixed;
+		top: 0;
+		right: 0;
+		left: 0;
+		bottom: 0;
+		content: '';
+		display: block;
+		background-attachment: fixed;
+		background-size: cover;
+		background-position: center;
+		background-image: url(http://codegen.caihongy.cn/20220129/7c2b359bf9c846cead5ed9ffec79e932.png);
+		z-index: -1;
+	}
+	.add-container {
+		width: 800px;
+		margin: 30px auto;
+		background: #fff;
+		border-radius: 10px;
+		padding: 30px;
+		box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.16);
+	}
+	.add-container .title {
+		font-size: 20px;
+		text-align: center;
+		margin-bottom: 20px;
+		color: rgba(0, 0, 0, 1);
+		font-weight: bold;
+	}
+	.layui-form-item .layui-form-label {
+		width: 120px;
+	}
+	.layui-form-item .layui-input-block {
+		margin-left: 150px;
+	}
+</style>
+<body>
+  <div id="app">
+    <div class="add-container">
+      <div class="title">添加菜品</div>
+      <form class="layui-form" action="">
+        <div class="layui-form-item">
+          <label class="layui-form-label">菜品名称</label>
+          <div class="layui-input-block">
+            <input type="text" name="caipinmingcheng" id="caipinmingcheng" lay-verify="required" placeholder="请输入菜品名称" autocomplete="off" class="layui-input">
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">菜品图片</label>
+          <div class="layui-input-block">
+            <input type="hidden" name="caipintupian" id="caipintupian">
+            <button type="button" class="layui-btn" id="btn-upload">
+              <i class="layui-icon">&#xe67c;</i>上传图片
+            </button>
+            <div id="img-preview" style="margin-top:10px;">
+              <img v-if="imgUrl" :src="imgUrl" style="max-width:200px;max-height:150px;border-radius:8px;">
+            </div>
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">餐类型</label>
+          <div class="layui-input-block">
+            <select name="canleixing" id="canleixing" lay-verify="required">
+              <option value="">请选择餐类型</option>
+              <option value="早餐">早餐</option>
+              <option value="午餐">午餐</option>
+              <option value="晚餐">晚餐</option>
+            </select>
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">价格</label>
+          <div class="layui-input-block">
+            <input type="number" step="0.01" name="jiage" id="jiage" lay-verify="required" placeholder="请输入价格" autocomplete="off" class="layui-input">
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">份额</label>
+          <div class="layui-input-block">
+            <select name="fene" id="fene" lay-verify="required">
+              <option value="">请选择份额</option>
+              <option value="小份">小份</option>
+              <option value="中份">中份</option>
+              <option value="大份">大份</option>
+              <option value="标准份">标准份</option>
+            </select>
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">菜品介绍</label>
+          <div class="layui-input-block">
+            <textarea name="caipinjieshao" id="caipinjieshao" placeholder="请输入菜品介绍" class="layui-textarea" style="height:120px;"></textarea>
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <div class="layui-input-block">
+            <button type="button" class="layui-btn" lay-submit lay-filter="submit" :style='{"backgroundColor":"rgba(203, 148, 92, 1)","borderRadius":"44px","borderWidth":"0","width":"auto","fontSize":"14px","borderStyle":"solid","height":"40px"}'>提交</button>
+            <button type="button" class="layui-btn layui-btn-primary" @click="back()" :style='{"borderRadius":"44px","borderWidth":"0","width":"auto","fontSize":"14px","borderStyle":"solid","height":"40px"}'>返回</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="../../layui/layui.js"></script>
+  <script src="../../js/vue.js"></script>
+  <script src="../../js/config.js"></script>
+  <script src="../../modules/config.js"></script>
+  <script src="../../js/utils.js"></script>
+
+  <script type="text/javascript">
+    var vue = new Vue({
+      el: '#app',
+      data: {
+        imgUrl: ''
+      },
+      methods: {
+        back() {
+          jump('../caipinxinxi/list.html');
+        }
+      }
+    });
+
+    layui.use(['layer', 'form', 'upload', 'http', 'jquery'], function() {
+      var layer = layui.layer;
+      var form = layui.form;
+      var upload = layui.upload;
+      var http = layui.http;
+      var jquery = layui.jquery;
+
+      // 图片上传
+      upload.render({
+        elem: '#btn-upload',
+        url: http.baseurl + 'file/upload',
+        field: 'file',
+        done: function(res){
+          if(res.code == 0){
+            jquery('#caipintupian').val('upload/' + res.file);
+            vue.imgUrl = http.baseurl + 'upload/' + res.file;
+            layer.msg('上传成功', {icon: 6});
+          } else {
+            layer.msg(res.msg || '上传失败', {icon: 5});
+          }
+        }
+      });
+
+      // 监听提交
+      form.on('submit(submit)', function(data) {
+        var postData = {
+          caipinmingcheng: jquery('#caipinmingcheng').val(),
+          caipintupian: jquery('#caipintupian').val(),
+          canleixing: jquery('#canleixing').val(),
+          jiage: jquery('#jiage').val(),
+          fene: jquery('#fene').val(),
+          caipinjieshao: jquery('#caipinjieshao').val(),
+        };
+
+        if (!postData.caipinmingcheng) {
+          layer.msg('请输入菜品名称', {icon: 5});
+          return false;
+        }
+        if (!postData.canleixing) {
+          layer.msg('请选择餐类型', {icon: 5});
+          return false;
+        }
+        if (!postData.jiage) {
+          layer.msg('请输入价格', {icon: 5});
+          return false;
+        }
+        if (!postData.fene) {
+          layer.msg('请选择份额', {icon: 5});
+          return false;
+        }
+
+        http.requestJson('caipinxinxi/save', 'post', postData, function(res) {
+          if (res.code == 0) {
+            layer.msg('添加成功', {icon: 6, time: 1500}, function() {
+              jump('../caipinxinxi/list.html');
+            });
+          } else {
+            layer.msg(res.msg || '添加失败', {icon: 5});
+          }
+        });
+        return false;
+      });
+    });
+  </script>
+</body>
+</html>
