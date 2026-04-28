@@ -18,7 +18,9 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.annotation.IgnoreAuth;
 
 import com.entity.DingcanEntity;
+import com.entity.CaipinxinxiEntity;
 import com.service.DingcanService;
+import com.service.CaipinxinxiService;
 import com.utils.PageUtils;
 import com.utils.R;
 import com.utils.MPUtil;
@@ -31,6 +33,9 @@ import com.utils.MPUtil;
 public class DingcanController {
     @Autowired
     private DingcanService dingcanService;
+
+    @Autowired
+    private CaipinxinxiService caipinxinxiService;
 
     @RequestMapping("/page")
     public R page(@RequestParam Map<String,Object> params,DingcanEntity dingcan,HttpServletRequest request){
@@ -80,6 +85,10 @@ public class DingcanController {
         }
         dingcan.setId(new Date().getTime()+new Double(Math.floor(Math.random()*1000)).longValue());
         dingcanService.insert(dingcan);
+
+        // 同步更新菜品点击量
+        syncClickNum(dingcan.getCaidanmingcheng());
+
         return R.ok();
     }
 
@@ -91,6 +100,10 @@ public class DingcanController {
         }
         dingcan.setId(new Date().getTime()+new Double(Math.floor(Math.random()*1000)).longValue());
         dingcanService.insert(dingcan);
+
+        // 同步更新菜品点击量
+        syncClickNum(dingcan.getCaidanmingcheng());
+
         return R.ok();
     }
 
@@ -129,4 +142,21 @@ public class DingcanController {
         return R.ok();
     }
 
+    /**
+     * 同步更新菜品点击量（下单时菜品浏览次数+1）
+     */
+    private void syncClickNum(String caipinmingcheng) {
+        if (caipinmingcheng == null || caipinmingcheng.isEmpty()) return;
+        try {
+            EntityWrapper<CaipinxinxiEntity> cew = new EntityWrapper<CaipinxinxiEntity>();
+            cew.eq("caipinmingcheng", caipinmingcheng);
+            CaipinxinxiEntity caipin = caipinxinxiService.selectOne(cew);
+            if (caipin != null) {
+                caipin.setClicknum(caipin.getClicknum() == null ? 1 : caipin.getClicknum() + 1);
+                caipinxinxiService.updateById(caipin);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

@@ -25,12 +25,8 @@
 		z-index: -1;
 	}
 
-	.data-detail {
-		padding-bottom: 20px;
-	}
-	.data-detail .layui-breadcrumb a.first {
-		color: #999 !important;
-	}
+	.data-detail { padding-bottom: 20px; }
+	.data-detail .layui-breadcrumb a.first { color: #999 !important; }
 	.detail-container {
 		width: 980px;
 		margin: 0 auto;
@@ -39,61 +35,17 @@
 		overflow: hidden;
 		box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.16);
 	}
-	.detail-img {
-		width: 100%;
-		height: 360px;
-		overflow: hidden;
-	}
-	.detail-img img {
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
-	}
-	.detail-info {
-		padding: 20px 30px;
-	}
-	.detail-info .detail-name {
-		font-size: 24px;
-		font-weight: bold;
-		color: #333;
-		margin-bottom: 15px;
-	}
-	.detail-info .detail-price {
-		font-size: 28px;
-		color: red;
-		font-weight: bold;
-		margin: 15px 0;
-	}
-	.detail-info .detail-price span {
-		font-size: 16px;
-	}
-	.detail-info .detail-meta {
-		display: flex;
-		gap: 30px;
-		margin: 15px 0;
-		padding: 15px 0;
-		border-top: 1px solid #eee;
-		border-bottom: 1px solid #eee;
-	}
-	.detail-info .detail-meta .meta-item {
-		font-size: 14px;
-		color: #666;
-	}
-	.detail-info .detail-meta .meta-item strong {
-		color: #333;
-		margin-right: 5px;
-	}
-	.detail-info .detail-desc {
-		margin-top: 15px;
-		font-size: 14px;
-		color: #666;
-		line-height: 1.8;
-	}
-	.detail-actions {
-		padding: 20px 30px;
-		text-align: right;
-		border-top: 1px solid #eee;
-	}
+	.detail-img { width: 100%; height: 360px; overflow: hidden; }
+	.detail-img img { width: 100%; height: 100%; object-fit: cover; }
+	.detail-info { padding: 20px 30px; }
+	.detail-info .detail-name { font-size: 24px; font-weight: bold; color: #333; margin-bottom: 15px; }
+	.detail-info .detail-price { font-size: 28px; color: red; font-weight: bold; margin: 15px 0; }
+	.detail-info .detail-price span { font-size: 16px; }
+	.detail-info .detail-meta { display: flex; gap: 30px; margin: 15px 0; padding: 15px 0; border-top: 1px solid #eee; border-bottom: 1px solid #eee; }
+	.detail-info .detail-meta .meta-item { font-size: 14px; color: #666; }
+	.detail-info .detail-meta .meta-item strong { color: #333; margin-right: 5px; }
+	.detail-info .detail-desc { margin-top: 15px; font-size: 14px; color: #666; line-height: 1.8; }
+	.detail-actions { padding: 20px 30px; text-align: right; border-top: 1px solid #eee; }
 
 	/* 订单弹窗 */
 	.order-modal-mask { display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:999;justify-content:center;align-items:center; }
@@ -121,6 +73,44 @@
 	.order-modal .modal-footer .btn-submit { padding:8px 30px;background:rgba(203,148,92,1);color:#fff;border:none;border-radius:20px;cursor:pointer;font-size:14px;transition:background 0.3s; }
 	.order-modal .modal-footer .btn-submit:hover { background:rgba(180,120,70,1); }
 	.order-modal .modal-footer .btn-cancel { padding:8px 30px;background:#f5f5f5;color:#666;border:1px solid #ddd;border-radius:20px;cursor:pointer;font-size:14px; }
+
+	/* 我的订单区域 */
+	.my-orders-section {
+		width: 980px;
+		margin: 20px auto 40px;
+		background: #fff;
+		border-radius: 12px;
+		overflow: hidden;
+		box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.16);
+	}
+	.my-orders-section .orders-header {
+		padding: 16px 24px;
+		background: rgba(223, 195, 153, 1);
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+	.my-orders-section .orders-header .oh-title { font-size: 18px; font-weight: bold; color: #fff; }
+	.my-orders-section .orders-header .oh-refresh { font-size: 13px; color: rgba(255,255,255,0.8); cursor: pointer; transition: color 0.3s; }
+	.my-orders-section .orders-header .oh-refresh:hover { color: #fff; }
+	.my-orders-section .orders-body { padding: 16px 20px; }
+	.order-list { display:flex;flex-wrap:wrap;padding:0;width:100%; }
+	.order-list .order-item { flex:0 0 50%;padding:0 10px;box-sizing:border-box; }
+	.order-list .order-item .order-body { cursor:default;background:#fff;border-radius:12px;padding:12px;display:flex;gap:12px;box-shadow:0px 2px 8px rgba(0,0,0,0.08);margin-bottom:12px;transition:box-shadow 0.3s;border:1px solid #f0f0f0; }
+	.order-list .order-item .order-body:hover { box-shadow:0 4px 14px rgba(0,0,0,0.14); }
+	.order-list .order-item .order-body .order-img { width:90px;height:75px;flex-shrink:0;overflow:hidden;border-radius:8px; }
+	.order-list .order-item .order-body .order-img img { width:100%;height:100%;object-fit:cover; }
+	.order-list .order-item .order-body .order-info { flex:1;display:flex;flex-direction:column;justify-content:space-between; }
+	.order-list .order-item .order-body .order-info .oi-name { font-size:15px;font-weight:bold;color:#333; }
+	.order-list .order-item .order-body .order-info .oi-meta { font-size:12px;color:#999; }
+	.order-list .order-item .order-body .order-info .oi-bottom { display:flex;justify-content:space-between;align-items:center; }
+	.order-list .order-item .order-body .order-info .oi-price { color:red;font-size:15px;font-weight:bold; }
+	.order-list .order-item .order-body .order-info .oi-status { font-size:12px;padding:2px 8px;border-radius:10px; }
+	.status-paid { background:#e6f7e6;color:#52c41a; }
+	.status-unpaid { background:#fff2e8;color:#fa541c; }
+	.cancel-btn { padding:4px 14px;background-color:rgba(220,53,69,1);color:#fff;border:none;border-radius:14px;cursor:pointer;font-size:12px;transition:background 0.3s; }
+	.cancel-btn:hover { background-color:rgba(200,40,55,1); }
+	.loading-tip { text-align:center;padding:20px;color:#999;font-size:14px; }
 </style>
 <body>
 	<div id="app">
@@ -157,6 +147,37 @@
 				<button :style='{"padding":"0 20px","boxShadow":"0 0 0px rgba(255,0,0,.3)","margin":"0 5px","borderColor":"rgba(0,0,0,.3)","backgroundColor":"#fff","color":"rgba(102, 102, 102, 1)","borderRadius":"44px","borderWidth":"1px","width":"auto","lineHeight":"36px","fontSize":"14px","borderStyle":"solid"}' @click="jump('../caipinxinxi/list.html')" type="button" class="layui-btn">
 					返回列表
 				</button>
+			</div>
+		</div>
+
+		<!-- ====== 我的订单区域 ====== -->
+		<div class="my-orders-section">
+			<div class="orders-header">
+				<div class="oh-title">我的订单</div>
+				<div class="oh-refresh" @click="loadMyOrders()">⟳ 刷新订单</div>
+			</div>
+			<div class="orders-body">
+				<div class="order-list">
+					<div v-for="(item,index) in myOrders" :key="'o'+index" class="order-item">
+						<div class="order-body">
+							<div class="order-img">
+								<img :src="item.caipintupian ? baseurl + item.caipintupian : '../../xznstatic/img/zwimg.jpg'" :alt="item.caidanmingcheng">
+							</div>
+							<div class="order-info">
+								<div class="oi-name">{{item.caidanmingcheng}}</div>
+								<div class="oi-meta">编号：{{item.dingdanbianhao}} | {{item.shuliang}}份 | {{item.jiudianmingcheng}}</div>
+								<div class="oi-bottom">
+									<div class="oi-price">￥{{Number(item.zongjine).toFixed(2)}}</div>
+									<div>
+										<span class="oi-status" :class="item.ispay=='已支付'?'status-paid':'status-unpaid'">{{item.ispay}}</span>
+										<button class="cancel-btn" @click="cancelOrder(item.id)" style="margin-left:6px;">退订</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div v-if="myOrders.length==0" class="loading-tip">暂无订餐记录</div>
 			</div>
 		</div>
 	</div>
@@ -229,18 +250,17 @@
 		var vue = new Vue({
 			el: '#app',
 			data: {
-				detail: {
-					id: 0
-				},
+				detail: { id: 0 },
 				detailTable: 'caipinxinxi',
 				baseurl: '',
-				// 订餐相关
 				showOrderModal: false,
 				orderForm: {
 					caipinmingcheng: '', caipintupian: '', canleixing: '', fene: '',
 					jiage: 0, shuliang: 1, yonghuming: '', xingming: '', shoujihao: '',
 					jiudianmingcheng: ''
 				},
+				myOrders: [],
+				currentUsername: '',
 			},
 			computed: {
 				orderTotal: function() {
@@ -248,9 +268,7 @@
 				}
 			},
 			methods: {
-				jump(url) {
-					jump(url)
-				},
+				jump(url) { jump(url) },
 				openOrder(item) {
 					if (!item || !item.caipinmingcheng) {
 						alert('菜品信息加载中，请稍后再试');
@@ -263,12 +281,9 @@
 						fene: item.fene,
 						jiage: item.jiage,
 						shuliang: 1,
-						yonghuming: '',
-						xingming: '',
-						shoujihao: '',
+						yonghuming: '', xingming: '', shoujihao: '',
 						jiudianmingcheng: ''
 					};
-					// 获取当前登录用户信息
 					var userTable = localStorage.getItem('userTable');
 					if (userTable) {
 						layui.http.request(userTable + '/session', 'get', {}, function(res) {
@@ -281,9 +296,7 @@
 					}
 					this.showOrderModal = true;
 				},
-				closeOrder() {
-					this.showOrderModal = false;
-				},
+				closeOrder() { this.showOrderModal = false; },
 				submitOrder() {
 					var that = this;
 					if (!that.orderForm.caipinmingcheng) { alert('菜品信息错误'); return; }
@@ -307,29 +320,60 @@
 						if (res.code == 0) {
 							alert('下单成功！');
 							that.showOrderModal = false;
+							that.loadMyOrders();
 						} else {
 							alert(res.msg || '下单失败');
 						}
 					});
+				},
+				loadMyOrders() {
+					var that = this;
+					if (!that.currentUsername) { that.myOrders = []; return; }
+					layui.http.request('dingcan/list', 'get', {
+						page: 1, limit: 50, yonghuming: that.currentUsername
+					}, function(res) {
+						if (res.code == 0) {
+							that.myOrders = res.data.list || [];
+						}
+					});
+				},
+				cancelOrder(id) {
+					if (!confirm('确定要退订此订单吗？')) return;
+					var that = this;
+					layui.http.requestJson('dingcan/cancel', 'post', id, function(res) {
+						if (res.code == 0) {
+							that.myOrders = that.myOrders.filter(function(item) {
+								return item.id !== id;
+							});
+							alert('退订成功');
+						} else {
+							alert(res.msg || '退订失败');
+						}
+					});
 				}
 			}
-		})
+		});
 
 		layui.use(['layer', 'form', 'element', 'carousel', 'http', 'jquery', 'laypage'], function() {
-			var layer = layui.layer;
-			var form = layui.form;
-			var carousel = layui.carousel;
 			var http = layui.http;
-			var jquery = layui.jquery;
-			var laypage = layui.laypage;
-
 			var id = http.getParam('id');
 			vue.detail.id = id;
 			vue.baseurl = http.baseurl;
 
 			http.request(vue.detailTable + '/detail/' + id, 'get', {}, function(res) {
-				vue.detail = res.data
+				vue.detail = res.data;
 			});
+
+			// 获取当前登录用户名，加载我的订单
+			var userTable = localStorage.getItem('userTable');
+			if (userTable) {
+				http.request(userTable + '/session', 'get', {}, function(res) {
+					if (res.code == 0 && res.data && res.data.yonghuming) {
+						vue.currentUsername = res.data.yonghuming;
+						vue.loadMyOrders();
+					}
+				});
+			}
 		});
 	</script>
 </body>
