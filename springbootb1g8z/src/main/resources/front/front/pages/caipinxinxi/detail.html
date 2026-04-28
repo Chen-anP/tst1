@@ -152,7 +152,7 @@
 			</div>
 			<div class="detail-actions">
 				<button :style='{"padding":"0 20px","boxShadow":"0 0 0px rgba(255,0,0,.3)","margin":"0 5px","borderColor":"rgba(0,0,0,.3)","backgroundColor":"rgba(203, 148, 92, 1)","color":"rgba(255, 255, 255, 1)","borderRadius":"44px","borderWidth":"0","width":"auto","lineHeight":"38px","fontSize":"14px","borderStyle":"solid"}' @click="openOrder(detail)" type="button" class="layui-btn">
-					🛒 立即订餐
+					立即订餐
 				</button>
 				<button :style='{"padding":"0 20px","boxShadow":"0 0 0px rgba(255,0,0,.3)","margin":"0 5px","borderColor":"rgba(0,0,0,.3)","backgroundColor":"#fff","color":"rgba(102, 102, 102, 1)","borderRadius":"44px","borderWidth":"1px","width":"auto","lineHeight":"36px","fontSize":"14px","borderStyle":"solid"}' @click="jump('../caipinxinxi/list.html')" type="button" class="layui-btn">
 					返回列表
@@ -166,14 +166,14 @@
 		<div class="order-modal">
 			<div class="modal-header">
 				<span>确认订餐</span>
-				<span class="close-btn" @click="closeOrder()">×</span>
+				<span class="close-btn" @click="closeOrder()">X/span>
 			</div>
 			<div class="modal-body">
 				<div class="food-preview">
 					<img :src="orderForm.caipintupian ? baseurl + orderForm.caipintupian : '../../xznstatic/img/zwimg.jpg'" :alt="orderForm.caipinmingcheng">
 					<div class="food-detail">
 						<div class="fd-name">{{orderForm.caipinmingcheng}}</div>
-						<div class="fd-type">{{orderForm.canleixing}} · {{orderForm.fene}}</div>
+						<div class="fd-type">{{orderForm.canleixing}} - {{orderForm.fene}}</div>
 						<div class="fd-price">￥{{Number(orderForm.jiage).toFixed(2)}}</div>
 					</div>
 				</div>
@@ -305,7 +305,7 @@
 
 					layui.http.requestJson('dingcan/save', 'post', postData, function(res) {
 						if (res.code == 0) {
-							alert('🎉 下单成功！');
+							alert('下单成功！');
 							that.showOrderModal = false;
 						} else {
 							alert(res.msg || '下单失败');

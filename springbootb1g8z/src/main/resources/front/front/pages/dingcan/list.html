@@ -269,7 +269,7 @@
 					</div>
 					<div class="card-info">
 						<div class="card-name">{{item.caipinmingcheng}}</div>
-						<div class="card-meta">{{item.canleixing}} · {{item.fene}}</div>
+						<div class="card-meta">{{item.canleixing}} - {{item.fene}}</div>
 						<div class="card-bottom">
 							<div class="card-price"><span>￥</span>{{Number(item.jiage).toFixed(2)}}</div>
 							<button v-if="!isEmployee" class="order-btn" @click="openOrder(item)">立即订餐</button>
@@ -332,14 +332,14 @@
 		<div class="order-modal">
 			<div class="modal-header">
 				<span>确认订餐</span>
-				<span class="close-btn" @click="closeOrder()">×</span>
+				<span class="close-btn" @click="closeOrder()">X/span>
 			</div>
 			<div class="modal-body">
 				<div class="food-preview">
 					<img :src="orderForm.caipintupian ? baseurl + orderForm.caipintupian : '../../xznstatic/img/zwimg.jpg'" :alt="orderForm.caipinmingcheng">
 					<div class="food-detail">
 						<div class="fd-name">{{orderForm.caipinmingcheng}}</div>
-						<div class="fd-type">{{orderForm.canleixing}} · {{orderForm.fene}}</div>
+						<div class="fd-type">{{orderForm.canleixing}} - {{orderForm.fene}}</div>
 						<div class="fd-price">￥{{Number(orderForm.jiage).toFixed(2)}}</div>
 					</div>
 				</div>
@@ -390,7 +390,7 @@
 		<div class="batch-modal">
 			<div class="bm-header">
 				<span>快捷订餐</span>
-				<span class="close-btn" @click="closeBatchOrder()">×</span>
+				<span class="close-btn" @click="closeBatchOrder()">X/span>
 			</div>
 			<div class="bm-body">
 				<!-- 左侧：菜品列表 -->
@@ -408,12 +408,12 @@
 							</div>
 							<div class="dish-info">
 								<div class="di-name">{{item.caipinmingcheng}}</div>
-								<div class="di-meta">{{item.canleixing}} · {{item.fene}}</div>
+								<div class="di-meta">{{item.canleixing}} - {{item.fene}}</div>
 							</div>
 							<div class="dish-action">
 								<div class="di-price"><span>￥</span>{{Number(item.jiage).toFixed(2)}}</div>
 								<button class="add-btn" v-if="!isInCart(item.id)" @click.stop="addToCart(item)">+</button>
-								<button class="add-btn" v-else style="background:#ccc;cursor:default;">✓</button>
+								<button class="add-btn" v-else style="background:#ccc;cursor:default;">X</button>
 							</div>
 						</div>
 						<div v-if="batchDishList.length==0" class="empty-tip">暂无菜品</div>
@@ -435,7 +435,7 @@
 								<div class="ci-price">￥{{Number(item.jiage).toFixed(2)}}</div>
 							</div>
 							<div class="ci-qty">
-								<button class="qty-btn del" @click="decreaseFromCart(index)">−</button>
+								<button class="qty-btn del" @click="decreaseFromCart(index)">-</button>
 								<span class="qty-num">{{item.shuliang}}</span>
 								<button class="qty-btn" @click="increaseCart(index)">+</button>
 							</div>
@@ -467,7 +467,7 @@
 		<div class="edit-modal">
 			<div class="em-header">
 				<span>编辑订单</span>
-				<span class="close-btn" @click="closeEditOrder()">×</span>
+				<span class="close-btn" @click="closeEditOrder()">X/span>
 			</div>
 			<div class="em-body">
 				<div class="em-row">
@@ -667,7 +667,7 @@
 
           layui.http.requestJson('dingcan/save', 'post', postData, function(res) {
             if (res.code == 0) {
-              alert('🎉 下单成功！');
+              alert('下单成功！');
               that.showOrderModal = false;
               that.searchOrders();
             } else {
@@ -872,7 +872,7 @@
               // 全部完成后刷新
               if (submitted + failed === total) {
                 if (failed === 0) {
-                  alert('🎉 成功下单 ' + submitted + ' 个菜品！');
+                  alert('成功下单 ' + submitted + ' 个菜品！');
                 } else {
                   alert('下单完成：成功 ' + submitted + ' 个，失败 ' + failed + ' 个');
                 }
@@ -901,7 +901,7 @@
           };
           layui.http.requestJson('xiaofeifankui/save', 'post', postData, function(res) {
             if (res.code == 0) {
-              alert('🎉 反馈提交成功，感谢您的意见！');
+              alert('反馈提交成功，感谢您的意见！');
               that.showFeedback = false;
               that.feedbackContent = '';
             } else {
@@ -953,14 +953,14 @@
   </script>
 
   <!-- 右下角反馈按钮 -->
-  <button class="feedback-fab" @click="openFeedback()" title="订单反馈">💬</button>
+  <button class="feedback-fab" @click="openFeedback()" title="订单反馈">X</button>
 
   <!-- 反馈弹窗 -->
   <div class="feedback-mask" :class="{'show': showFeedback}" @click.self="closeFeedback()">
     <div class="feedback-dialog">
       <div class="fd-header">
-        <span>📝 订单反馈</span>
-        <span class="fd-close" @click="closeFeedback()">×</span>
+        <span>订单反馈</span>
+        <span class="fd-close" @click="closeFeedback()">X/span>
       </div>
       <div class="fd-body">
         <div class="fd-label">请留下您的宝贵意见或问题反馈：</div>

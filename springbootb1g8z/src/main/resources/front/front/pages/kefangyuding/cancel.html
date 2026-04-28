@@ -223,7 +223,7 @@
 	          <div class="card-body">
 	            <div class="room-name">{{item.kefangmingcheng}}</div>
 	            <div class="room-meta"><i class="layui-icon layui-icon-home"></i>{{item.kefangleixing}}</div>
-	            <div class="room-meta hotel"><i class="layui-icon layui-icon-location"></i>{{item.jiudianmingcheng}} · {{item.jiudiandizhi}}</div>
+	            <div class="room-meta hotel"><i class="layui-icon layui-icon-location"></i>{{item.jiudianmingcheng}} - {{item.jiudiandizhi}}</div>
 	            <div class="divider"></div>
 	            <div class="booking-row"><span class="label">预定编号</span><span>{{item.yudingbianhao}}</span></div>
 	            <div class="booking-row"><span class="label">预定日期</span><span>{{item.yudingriqi}}</span></div>
@@ -319,7 +319,7 @@
           };
           layui.http.requestJson('xiaofeifankui/save', 'post', postData, function(res) {
             if (res.code == 0) {
-              alert('🎉 反馈提交成功，感谢您的意见！');
+              alert('反馈提交成功，感谢您的意见！');
               that.showFeedback = false;
               that.feedbackContent = '';
             } else {
@@ -427,14 +427,14 @@
   </script>
 
   <!-- 右下角反馈按钮 -->
-  <button class="feedback-fab" @click="openFeedback()" title="订单反馈">💬</button>
+  <button class="feedback-fab" @click="openFeedback()" title="订单反馈">X</button>
 
   <!-- 反馈弹窗 -->
   <div class="feedback-mask" :class="{'show': showFeedback}" @click.self="closeFeedback()">
     <div class="feedback-dialog">
       <div class="fd-header">
-        <span>📝 订单反馈</span>
-        <span class="fd-close" @click="closeFeedback()">×</span>
+        <span>订单反馈</span>
+        <span class="fd-close" @click="closeFeedback()">X/span>
       </div>
       <div class="fd-body">
         <div class="fd-label">请留下您的宝贵意见或问题反馈：</div>
@@ -450,8 +450,8 @@
   <div class="cancel-mask" :class="{'show': showCancelDialog}" @click.self="closeCancelDialog()">
     <div class="cancel-dialog" v-if="cancelItem">
       <div class="cd-header">
-        <span>⚠️ 确认退订</span>
-        <span class="cd-close" @click="closeCancelDialog()">×</span>
+        <span>确认退订</span>
+        <span class="cd-close" @click="closeCancelDialog()">X/span>
       </div>
       <div class="cd-img-wrap">
         <img :src="cancelItem.kefangtupian ? baseurl + cancelItem.kefangtupian.split(',')[0] : '../../xznstatic/img/zwimg.jpg'" :alt="cancelItem.kefangmingcheng">
@@ -468,7 +468,7 @@
         <div class="cd-row"><span class="cd-label">支付状态</span><span :style="{color: cancelItem.ispay=='已支付'?'#52c41a':'#fa541c'}">{{cancelItem.ispay}}</span></div>
         <div class="cd-divider"></div>
         <div class="cd-warning">
-          <span>⚠️</span>
+          <span>!</span>
           <span>退订后不可恢复，请确认是否继续退订？</span>
         </div>
       </div>
