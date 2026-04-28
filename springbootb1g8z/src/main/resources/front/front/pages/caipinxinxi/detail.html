@@ -94,6 +94,33 @@
 		text-align: right;
 		border-top: 1px solid #eee;
 	}
+
+	/* 订单弹窗 */
+	.order-modal-mask { display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:999;justify-content:center;align-items:center; }
+	.order-modal-mask.show { display:flex; }
+	.order-modal { background:#fff;border-radius:12px;width:500px;max-width:90%;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,0.3);animation:modalIn 0.3s ease; }
+	@keyframes modalIn { from{transform:scale(0.9);opacity:0} to{transform:scale(1);opacity:1} }
+	.order-modal .modal-header { padding:16px 20px;background:rgba(203,148,92,1);color:#fff;font-size:18px;font-weight:bold;display:flex;justify-content:space-between;align-items:center; }
+	.order-modal .modal-header .close-btn { cursor:pointer;font-size:22px;line-height:1; }
+	.order-modal .modal-body { padding:20px; }
+	.order-modal .modal-body .food-preview { display:flex;gap:15px;margin-bottom:20px;padding-bottom:15px;border-bottom:1px solid #eee; }
+	.order-modal .modal-body .food-preview img { width:100px;height:80px;object-fit:cover;border-radius:8px; }
+	.order-modal .modal-body .food-preview .food-detail { flex:1; }
+	.order-modal .modal-body .food-preview .food-detail .fd-name { font-size:16px;font-weight:bold;color:#333; }
+	.order-modal .modal-body .food-preview .food-detail .fd-type { font-size:13px;color:#666;margin-top:4px; }
+	.order-modal .modal-body .food-preview .food-detail .fd-price { color:red;font-size:18px;font-weight:bold;margin-top:4px; }
+	.order-modal .modal-body .form-row { display:flex;align-items:center;margin-bottom:14px; }
+	.order-modal .modal-body .form-row .form-label { width:80px;font-size:14px;color:#333;text-align:right;margin-right:10px;flex-shrink:0; }
+	.order-modal .modal-body .form-row .form-input { flex:1; }
+	.order-modal .modal-body .form-row .form-input input { width:100%;height:38px;border:1px solid #ddd;border-radius:6px;padding:0 10px;font-size:14px;box-sizing:border-box; }
+	.order-modal .modal-body .form-row .form-input input:focus { border-color:rgba(203,148,92,1);outline:none; }
+	.order-modal .modal-body .total-row { display:flex;justify-content:flex-end;align-items:center;padding-top:10px;border-top:1px solid #eee;margin-top:10px; }
+	.order-modal .modal-body .total-row .total-label { font-size:16px;color:#333;margin-right:10px; }
+	.order-modal .modal-body .total-row .total-price { color:red;font-size:22px;font-weight:bold; }
+	.order-modal .modal-footer { padding:16px 20px;display:flex;justify-content:flex-end;gap:10px;border-top:1px solid #eee; }
+	.order-modal .modal-footer .btn-submit { padding:8px 30px;background:rgba(203,148,92,1);color:#fff;border:none;border-radius:20px;cursor:pointer;font-size:14px;transition:background 0.3s; }
+	.order-modal .modal-footer .btn-submit:hover { background:rgba(180,120,70,1); }
+	.order-modal .modal-footer .btn-cancel { padding:8px 30px;background:#f5f5f5;color:#666;border:1px solid #ddd;border-radius:20px;cursor:pointer;font-size:14px; }
 </style>
 <body>
 	<div id="app">
@@ -124,9 +151,70 @@
 				</div>
 			</div>
 			<div class="detail-actions">
-				<button :style='{"padding":"0 20px","boxShadow":"0 0 0px rgba(255,0,0,.3)","margin":"0 5px","borderColor":"rgba(0,0,0,.3)","backgroundColor":"rgba(203, 148, 92, 1)","color":"rgba(255, 255, 255, 1)","borderRadius":"44px","borderWidth":"0","width":"auto","lineHeight":"34px","fontSize":"14px","borderStyle":"solid"}' @click="jump('../caipinxinxi/list.html')" type="button" class="layui-btn">
+				<button :style='{"padding":"0 20px","boxShadow":"0 0 0px rgba(255,0,0,.3)","margin":"0 5px","borderColor":"rgba(0,0,0,.3)","backgroundColor":"rgba(203, 148, 92, 1)","color":"rgba(255, 255, 255, 1)","borderRadius":"44px","borderWidth":"0","width":"auto","lineHeight":"38px","fontSize":"14px","borderStyle":"solid"}' @click="openOrder(detail)" type="button" class="layui-btn">
+					🛒 立即订餐
+				</button>
+				<button :style='{"padding":"0 20px","boxShadow":"0 0 0px rgba(255,0,0,.3)","margin":"0 5px","borderColor":"rgba(0,0,0,.3)","backgroundColor":"#fff","color":"rgba(102, 102, 102, 1)","borderRadius":"44px","borderWidth":"1px","width":"auto","lineHeight":"36px","fontSize":"14px","borderStyle":"solid"}' @click="jump('../caipinxinxi/list.html')" type="button" class="layui-btn">
 					返回列表
 				</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- 订单弹窗 -->
+	<div class="order-modal-mask" :class="{'show': showOrderModal}" @click.self="closeOrder()">
+		<div class="order-modal">
+			<div class="modal-header">
+				<span>确认订餐</span>
+				<span class="close-btn" @click="closeOrder()">×</span>
+			</div>
+			<div class="modal-body">
+				<div class="food-preview">
+					<img :src="orderForm.caipintupian ? baseurl + orderForm.caipintupian : '../../xznstatic/img/zwimg.jpg'" :alt="orderForm.caipinmingcheng">
+					<div class="food-detail">
+						<div class="fd-name">{{orderForm.caipinmingcheng}}</div>
+						<div class="fd-type">{{orderForm.canleixing}} · {{orderForm.fene}}</div>
+						<div class="fd-price">￥{{Number(orderForm.jiage).toFixed(2)}}</div>
+					</div>
+				</div>
+				<div class="form-row">
+					<div class="form-label">数量</div>
+					<div class="form-input">
+						<input type="number" v-model.number="orderForm.shuliang" min="1" max="99">
+					</div>
+				</div>
+				<div class="form-row">
+					<div class="form-label">总金额</div>
+					<div class="form-input">
+						<input type="text" :value="'￥' + orderTotal.toFixed(2)" readonly style="background:#f9f9f9;color:red;font-weight:bold;font-size:16px;">
+					</div>
+				</div>
+				<div class="form-row">
+					<div class="form-label">用户名</div>
+					<div class="form-input">
+						<input type="text" v-model="orderForm.yonghuming" readonly style="background:#f9f9f9;">
+					</div>
+				</div>
+				<div class="form-row">
+					<div class="form-label">姓名</div>
+					<div class="form-input">
+						<input type="text" v-model="orderForm.xingming" readonly style="background:#f9f9f9;">
+					</div>
+				</div>
+				<div class="form-row">
+					<div class="form-label">手机号</div>
+					<div class="form-input">
+						<input type="text" v-model="orderForm.shoujihao" readonly style="background:#f9f9f9;">
+					</div>
+				</div>
+				<div class="total-row">
+					<div class="total-label">应付金额：</div>
+					<div class="total-price">￥{{orderTotal.toFixed(2)}}</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button class="btn-cancel" @click="closeOrder()">取消</button>
+				<button class="btn-submit" @click="submitOrder()">确认下单</button>
 			</div>
 		</div>
 	</div>
@@ -146,11 +234,83 @@
 				},
 				detailTable: 'caipinxinxi',
 				baseurl: '',
+				// 订餐相关
+				showOrderModal: false,
+				orderForm: {
+					caipinmingcheng: '', caipintupian: '', canleixing: '', fene: '',
+					jiage: 0, shuliang: 1, yonghuming: '', xingming: '', shoujihao: '',
+					jiudianmingcheng: ''
+				},
+			},
+			computed: {
+				orderTotal: function() {
+					return (this.orderForm.jiage || 0) * (this.orderForm.shuliang || 0);
+				}
 			},
 			methods: {
 				jump(url) {
 					jump(url)
 				},
+				openOrder(item) {
+					if (!item || !item.caipinmingcheng) {
+						alert('菜品信息加载中，请稍后再试');
+						return;
+					}
+					this.orderForm = {
+						caipinmingcheng: item.caipinmingcheng,
+						caipintupian: item.caipintupian,
+						canleixing: item.canleixing,
+						fene: item.fene,
+						jiage: item.jiage,
+						shuliang: 1,
+						yonghuming: '',
+						xingming: '',
+						shoujihao: '',
+						jiudianmingcheng: ''
+					};
+					// 获取当前登录用户信息
+					var userTable = localStorage.getItem('userTable');
+					if (userTable) {
+						layui.http.request(userTable + '/session', 'get', {}, function(res) {
+							if (res.code == 0 && res.data) {
+								if (res.data.yonghuming) vue.orderForm.yonghuming = res.data.yonghuming;
+								if (res.data.xingming) vue.orderForm.xingming = res.data.xingming;
+								if (res.data.shoujihao) vue.orderForm.shoujihao = res.data.shoujihao;
+							}
+						});
+					}
+					this.showOrderModal = true;
+				},
+				closeOrder() {
+					this.showOrderModal = false;
+				},
+				submitOrder() {
+					var that = this;
+					if (!that.orderForm.caipinmingcheng) { alert('菜品信息错误'); return; }
+					if (!that.orderForm.shuliang || that.orderForm.shuliang < 1) { alert('请选择数量'); return; }
+
+					var postData = {
+						dingdanbianhao: genTradeNo(),
+						caidanmingcheng: that.orderForm.caipinmingcheng,
+						jiage: that.orderForm.jiage,
+						shuliang: that.orderForm.shuliang,
+						zongjine: that.orderTotal,
+						yonghuming: that.orderForm.yonghuming,
+						xingming: that.orderForm.xingming,
+						shoujihao: that.orderForm.shoujihao,
+						jiudianmingcheng: that.orderForm.jiudianmingcheng || '香格里拉',
+						ispay: '未支付'
+					};
+
+					layui.http.requestJson('dingcan/save', 'post', postData, function(res) {
+						if (res.code == 0) {
+							alert('🎉 下单成功！');
+							that.showOrderModal = false;
+						} else {
+							alert(res.msg || '下单失败');
+						}
+					});
+				}
 			}
 		})
 
