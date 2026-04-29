@@ -291,16 +291,21 @@
 								if (res.data.yonghuming) vue.orderForm.yonghuming = res.data.yonghuming;
 								if (res.data.xingming) vue.orderForm.xingming = res.data.xingming;
 								if (res.data.shoujihao) vue.orderForm.shoujihao = res.data.shoujihao;
+								vue.showOrderModal = true;
+							} else {
+								alert('获取用户信息失败，请重新登录');
 							}
 						});
+					} else {
+						alert('请先登录');
 					}
-					this.showOrderModal = true;
 				},
 				closeOrder() { this.showOrderModal = false; },
 				submitOrder() {
 					var that = this;
 					if (!that.orderForm.caipinmingcheng) { alert('菜品信息错误'); return; }
 					if (!that.orderForm.shuliang || that.orderForm.shuliang < 1) { alert('请选择数量'); return; }
+					if (!that.orderForm.yonghuming) { alert('用户信息未加载，请稍后重试'); return; }
 
 					var postData = {
 						dingdanbianhao: genTradeNo(),
