@@ -321,7 +321,9 @@
 						ispay: '未支付'
 					};
 
+					console.log('[dingcan/save] sending:', JSON.stringify(postData));
 					layui.http.requestJson('dingcan/save', 'post', postData, function(res) {
+						console.log('[dingcan/save] response:', JSON.stringify(res));
 						if (res.code == 0) {
 							alert('下单成功！');
 							that.showOrderModal = false;
@@ -329,6 +331,9 @@
 						} else {
 							alert(res.msg || '下单失败');
 						}
+					}, function(err) {
+						console.error('[dingcan/save] error:', err);
+						alert('下单请求失败，请检查网络或登录状态');
 					});
 				},
 				loadMyOrders() {
@@ -337,9 +342,12 @@
 					layui.http.request('dingcan/list', 'get', {
 						page: 1, limit: 50, yonghuming: that.currentUsername
 					}, function(res) {
+						console.log('[dingcan/list] response:', JSON.stringify(res));
 						if (res.code == 0) {
 							that.myOrders = res.data.list || [];
 						}
+					}, function(err) {
+						console.error('[dingcan/list] error:', err);
 					});
 				},
 				cancelOrder(id) {

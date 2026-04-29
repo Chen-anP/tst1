@@ -17,7 +17,7 @@ layui.define(['jquery', 'layer'], function(exports) { //提示：模块也可以
 				return decodeURI(r[2]); //对参数进行decodeURI解码
 			return null;
 		},
-		request: function(url, type, data, callback) {
+		request: function(url, type, data, callback, errorCallback) {
 			//loading层
 			var index = layer.load(1, {
 				shade: [0.1, '#fff'] //0.1透明度的白色背景
@@ -47,20 +47,21 @@ layui.define(['jquery', 'layer'], function(exports) { //提示：模块也可以
 					layer.close(index);
 				},
 				error: function(xhr, status, error) {
-					console.log(xhr, status, error)
-					if(xhr.responseJSON.code==401 || xhr.responseJSON.code==403) {
-                                                 window.parent.location.href = '../login/login.html';
-					} else {
-						layer.msg("请求接口失败", {
-							time: 2000,
-							icon: 5
-						})
-						layer.close(index);
-					}
+					console.log('[request error]', status, error, xhr);
+					try {
+						if(xhr.responseJSON && (xhr.responseJSON.code==401 || xhr.responseJSON.code==403)) {
+							window.parent.location.href = '../login/login.html';
+							layer.close(index);
+							return;
+						}
+					} catch(e) {}
+					layer.msg("请求接口失败: " + (error || status), { time: 2000, icon: 5 });
+					layer.close(index);
+					if (typeof errorCallback === 'function') errorCallback(xhr);
 				}
 			});
 		},
-		requestJson: function(url, type, data, callback) {
+		requestJson: function(url, type, data, callback, errorCallback) {
 			//loading层
 			var index = layer.load(1, {
 				shade: [0.1, '#fff'] //0.1透明度的白色背景
@@ -94,16 +95,17 @@ layui.define(['jquery', 'layer'], function(exports) { //提示：模块也可以
 					layer.close(index);
 				},
 				error: function(xhr, status, error) {
-					console.log(xhr, status, error)
-					if(xhr.responseJSON.code==401 || xhr.responseJSON.code==403) {
-                                                 window.parent.location.href = '../login/login.html';
-					} else {
-						layer.msg("请求接口失败", {
-							time: 2000,
-							icon: 5
-						})
-						layer.close(index);
-					}
+					console.log('[requestJson error]', status, error, xhr);
+					try {
+						if(xhr.responseJSON && (xhr.responseJSON.code==401 || xhr.responseJSON.code==403)) {
+							window.parent.location.href = '../login/login.html';
+							layer.close(index);
+							return;
+						}
+					} catch(e) {}
+					layer.msg("请求接口失败: " + (error || status), { time: 2000, icon: 5 });
+					layer.close(index);
+					if (typeof errorCallback === 'function') errorCallback(xhr);
 				},
 			});
 		},
